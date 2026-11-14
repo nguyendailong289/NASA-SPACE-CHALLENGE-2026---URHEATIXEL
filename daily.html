@@ -62,6 +62,48 @@ aside h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(
 dl.meta-list{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:14px}
 dl.meta-list dt{color:var(--muted)} dl.meta-list dd{margin:0;text-align:right}
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+/* ---- Khối LST trung bình năm (CSS riêng, tiền tố lm-) ---- */
+.lm{max-width:1400px;margin:0 auto;padding:8px 24px 40px}
+@media (max-width:600px){.lm{padding:8px 16px 32px}}
+.lm-title{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin:0 0 6px;font-size:20px;font-weight:600}
+.lm-title span{font-family:var(--mono);font-size:13px;color:var(--muted);font-weight:500}
+.lm-lead{margin:0 0 16px;color:var(--muted);max-width:80ch;font-size:15px}
+.lm-shell{display:grid;grid-template-columns:minmax(0,1fr) 290px;overflow:hidden}
+@media (max-width:1000px){.lm-shell{grid-template-columns:1fr}}
+.lm-main{display:grid;grid-template-rows:auto 1fr;min-width:0}
+.lm-bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)}
+.lm-seg{display:inline-flex;padding:4px;background:var(--surface-2);border-radius:10px;gap:2px}
+.lm-seg button{border:0;background:transparent;padding:8px 14px;border-radius:7px;cursor:pointer;font-weight:500;font-size:14px;color:var(--muted);min-height:36px;transition:background .2s,color .2s}
+.lm-seg button:hover{color:var(--fg)}
+.lm-seg button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:0 0 0 1px var(--border)}
+.lm-view{position:relative;height:min(68vh,660px);min-height:400px;background:var(--map-bg)}
+#lmMap{position:absolute;inset:0;background:var(--map-bg);cursor:crosshair}
+#lmMap .leaflet-image-layer{image-rendering:pixelated}
+.lm-final{position:absolute;inset:0;display:none;overflow:auto;background:var(--surface-2);padding:16px;text-align:center}
+.lm-final img{max-width:100%;height:auto;border-radius:6px;box-shadow:0 2px 16px rgba(0,0,0,.35)}
+.lm-view[data-view="final"] .lm-final{display:block}
+.lm-view[data-view="final"] #lmMap{visibility:hidden}
+.lm-side{border-left:1px solid var(--border);padding:16px;display:grid;gap:20px;align-content:start}
+@media (max-width:1000px){.lm-side{border-left:0;border-top:1px solid var(--border)}}
+.lm-side h3{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 10px;font-weight:600}
+.lm-side .t{font-size:17px;font-weight:600;margin:0}
+.lm-side .s{font-size:14px;color:var(--muted);margin:4px 0 0}
+.lm-ramp{height:14px;border-radius:4px}
+.lm-ticks{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:6px}
+.lm-stats{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:14px;margin:0}
+.lm-stats dt{color:var(--muted)} .lm-stats dd{margin:0;text-align:right;font-family:var(--mono)}
+.lm-layer{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;min-height:36px}
+.lm-layer input{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
+.lm-dl{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 16px;border-radius:10px;background:var(--accent);color:#111;font-weight:600;text-decoration:none;min-height:44px;transition:filter .2s}
+.lm-dl:hover{filter:brightness(1.08)}
+.lm-dl small{font-family:var(--mono);font-weight:500;opacity:.75}
+:root[data-theme="light"] .lm-dl{color:#fff}
+.lm-tip{position:fixed;pointer-events:none;z-index:1000;padding:8px 10px;border-radius:8px;background:rgba(11,17,32,.94);color:#fff;font-size:12px;line-height:1.6;border:1px solid rgba(255,255,255,.15);display:none;white-space:nowrap;font-family:var(--mono)}
+.lm-tip .nm{font-family:var(--sans);font-size:13px;font-weight:600}
+.lm-tip .on{font-weight:600}
+</style>
 </head>
 <body>
 <header class="top">
@@ -133,6 +175,43 @@ dl.meta-list dt{color:var(--muted)} dl.meta-list dd{margin:0;text-align:right}
     </div>
   </aside>
 </main>
+
+<section class="lm" id="meanSec" aria-labelledby="lmH">
+  <h2 class="lm-title" id="lmH">LST trung bình năm <span>pixel 1 km · kéo / cuộn để phóng to</span></h2>
+  <p class="lm-lead">Gộp từ các ảnh LST theo ngày ở trên: mỗi pixel lấy trung bình những ngày có dữ liệu (ngày bị mây che không tính).</p>
+  <div class="card lm-shell">
+    <div class="lm-main">
+      <div class="lm-bar">
+        <div class="lm-seg" role="group" aria-label="Chọn năm LST trung bình">
+          <button data-lmy="2017" aria-pressed="true">Năm 2017</button>
+          <button data-lmy="2025" aria-pressed="false">Năm 2025</button>
+        </div>
+        <div class="lm-seg" role="group" aria-label="Kiểu hiển thị LST trung bình">
+          <button data-lmv="raster" aria-pressed="true">Lớp raster</button>
+          <button data-lmv="final" aria-pressed="false">Bản đồ kết quả</button>
+        </div>
+      </div>
+      <div class="lm-view" id="lmView" data-view="raster">
+        <div id="lmMap" role="region" aria-label="Bản đồ LST trung bình năm"></div>
+        <div class="lm-final"><a id="lmFinalLink" target="_blank" rel="noopener"><img id="lmFinalImg" alt=""></a></div>
+      </div>
+    </div>
+    <div class="lm-side">
+      <div><p class="t" id="lmT">–</p><p class="s">Nhiệt độ bề mặt ban ngày trung bình (°C)</p></div>
+      <div><h3>Chú giải (°C)</h3><div class="lm-ramp" id="lmRamp"></div><div class="lm-ticks" id="lmTicks"></div></div>
+      <div><h3>Thống kê</h3><dl class="lm-stats" id="lmStats"></dl></div>
+      <div id="lmBnd"><h3>Ranh giới</h3>
+        <label class="lm-layer"><input type="checkbox" id="lmTinh" checked> Ranh giới tỉnh</label>
+        <label class="lm-layer"><input type="checkbox" id="lmXa" checked> Ranh giới xã (126 đơn vị)</label>
+      </div>
+      <a class="lm-dl" id="lmDl" download>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+        Tải bản đồ <small id="lmDlSize"></small>
+      </a>
+    </div>
+  </div>
+</section>
+<div class="lm-tip" id="lmTip"></div>
 <div class="tooltip" id="tip"></div>
 
 <template id="mapTpl">
@@ -340,6 +419,85 @@ const lt = document.getElementById('legendTicks');
 for (let i=0;i<=5;i++){ const sp=document.createElement('span'); sp.textContent = Math.round(LO + (HI-LO)*i/5); lt.appendChild(sp); }
 
 render();
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="data/normalized/normalized_meta.js"></script>
+<script>
+/* ---- LST trung bình năm (dữ liệu dùng chung với Phần 02) ---- */
+(() => {
+const N = window.LSTN; if (!N || !window.L) return;
+const W = N.width, H = N.height, [lonMin, latMin, lonMax, latMax] = N.bounds;
+const dx = (lonMax - lonMin) / W, dy = (latMax - latMin) / H;
+const SX = Math.cos((latMin + latMax) / 2 * Math.PI / 180) * dx / dy;
+const MAGMA = ['#000004','#140e36','#3b0f70','#641a80','#8c2981','#b73779','#de4968','#f7705c','#fe9f6d','#fecf92','#fcfdbf']
+  .map(h => [1,3,5].map(i => parseInt(h.slice(i, i + 2), 16)));
+const magma = t => { t = Math.min(1, Math.max(0, t)) * (MAGMA.length - 1);
+  const i = Math.min(MAGMA.length - 2, Math.floor(t)), f = t - i, a = MAGMA[i], b = MAGMA[i + 1];
+  return a.map((v, j) => Math.round(v + (b[j] - v) * f)); };
+const f2 = v => v.toLocaleString('vi-VN', { minimumFractionDigits:2, maximumFractionDigits:2 });
+const urls = {};
+function url(y){
+  if (urls[y]) return urls[y];
+  const Y = N.years[y], cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const cx = cv.getContext('2d'), img = cx.createImageData(W, H);
+  for (let i = 0; i < W * H; i++){ const v = Y.mean[i]; if (v == null) continue;
+    img.data.set([...magma((v - Y.lstMin) / (Y.lstMax - Y.lstMin)), 255], i * 4); }
+  cx.putImageData(img, 0, 0); return urls[y] = cv.toDataURL();
+}
+const map = L.map('lmMap', { crs: L.CRS.Simple, minZoom: 0, maxZoom: 6, zoomSnap: 0.25, zoomDelta: 0.5, attributionControl: false, preferCanvas: true });
+const bounds = [[-H, 0], [0, W * SX]];
+const ov = L.imageOverlay(url('2017'), bounds).addTo(map);
+map.fitBounds(bounds); map.setMaxBounds(L.latLngBounds(bounds).pad(0.3));
+const P = ([lon, lat]) => [-(latMax - lat) / dy, (lon - lonMin) / dx * SX];
+const xa = L.layerGroup(N.xa.map(x => L.polyline(x.rings.map(r => r.map(P)), { color:'#ffffff', weight:0.8, opacity:0.7, interactive:false }))).addTo(map);
+const tinh = L.polyline(N.tinh.map(r => r.map(P)), { color:'#ffffff', weight:2.5, interactive:false }).addTo(map);
+document.getElementById('lmTinh').onchange = e => e.target.checked ? tinh.addTo(map) : tinh.remove();
+document.getElementById('lmXa').onchange = e => e.target.checked ? xa.addTo(map) : xa.remove();
+document.getElementById('lmRamp').style.background = `linear-gradient(90deg,${MAGMA.map(c => `rgb(${c})`).join(',')})`;
+let year = '2017';
+function setYear(y){
+  year = y; ov.setUrl(url(y));
+  document.querySelectorAll('[data-lmy]').forEach(b => b.setAttribute('aria-pressed', b.dataset.lmy === y));
+  const Y = N.years[y], m = N.maps['mean_' + y];
+  document.getElementById('lmT').textContent = 'LST trung bình năm ' + y;
+  document.getElementById('lmTicks').innerHTML = `<span>${f2(Y.lstMin)}</span><span>${f2((Y.lstMin + Y.lstMax) / 2)}</span><span>${f2(Y.lstMax)}</span>`;
+  document.getElementById('lmStats').innerHTML = `<dt>Nhỏ nhất</dt><dd>${f2(Y.lstMin)} °C</dd><dt>Trung bình</dt><dd>${f2(Y.lstMean)} °C</dd><dt>Lớn nhất</dt><dd>${f2(Y.lstMax)} °C</dd>`;
+  const dl = document.getElementById('lmDl');
+  if (m){ dl.href = m.file; dl.setAttribute('download', m.file.split('/').pop());
+    dl.setAttribute('aria-label', 'Tải bản đồ LST trung bình năm ' + y + ' (PNG)');
+    document.getElementById('lmDlSize').textContent = 'PNG · ' + (m.bytes / 1048576).toLocaleString('vi-VN', { maximumFractionDigits:1 }) + ' MB';
+    const fi = document.getElementById('lmFinalImg'); fi.src = m.preview; fi.alt = 'Bản đồ LST trung bình năm ' + y;
+    document.getElementById('lmFinalLink').href = m.file; }
+}
+function setView(v){
+  document.getElementById('lmView').dataset.view = v;
+  document.querySelectorAll('[data-lmv]').forEach(b => b.setAttribute('aria-pressed', b.dataset.lmv === v));
+  document.getElementById('lmBnd').style.display = v === 'raster' ? '' : 'none';
+  if (v === 'raster') map.invalidateSize();
+}
+document.querySelectorAll('[data-lmy]').forEach(b => b.onclick = () => setYear(b.dataset.lmy));
+document.querySelectorAll('[data-lmv]').forEach(b => b.onclick = () => setView(b.dataset.lmv));
+const tip = document.getElementById('lmTip');
+const hl = L.rectangle([[0,0],[0,0]], { color:'#22D3EE', weight:2.5, fill:false, interactive:false });
+const hide = () => { tip.style.display = 'none'; hl.remove(); };
+map.on('mousemove click', e => {
+  const row = Math.floor(-e.latlng.lat), col = Math.floor(e.latlng.lng / SX);
+  if (row < 0 || col < 0 || row >= H || col >= W) return hide();
+  const i = row * W + col; if (N.years['2017'].mean[i] == null) return hide();
+  const lat = latMax - (row + .5) * dy, lon = lonMin + (col + .5) * dx;
+  tip.innerHTML = `<div class="nm">${N.pixXa[i] >= 0 ? N.xa[N.pixXa[i]].ten : 'Hà Nội'}</div>${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E<br>` +
+    ['2017', '2025'].map(y => `<span class="${y === year ? 'on' : ''}">${y}: ${f2(N.years[y].mean[i])} °C</span>`).join('<br>');
+  tip.style.display = 'block';
+  const ev = e.originalEvent, tw = tip.offsetWidth, th = tip.offsetHeight;
+  let tx = ev.clientX + 16, ty = ev.clientY + 16;
+  if (tx + tw > innerWidth - 8) tx = ev.clientX - tw - 16;
+  if (ty + th > innerHeight - 8) ty = ev.clientY - th - 16;
+  tip.style.left = tx + 'px'; tip.style.top = ty + 'px';
+  hl.setBounds([[-row - 1, col * SX], [-row, (col + 1) * SX]]); if (!map.hasLayer(hl)) hl.addTo(map);
+});
+map.on('mouseout dragstart zoomstart', hide);
+setYear('2017');
 })();
 </script>
 </body>
