@@ -12,6 +12,7 @@ Dự án tham gia **NASA Space Apps Challenge 2026** (Hà Nội).
 | 02 | `normalized.html` | LST trung bình năm, LST chuẩn hóa, phân cấp và biến động phân cấp |
 | 03 | `builtup.html` | Đất xây dựng 2017, 2025 và biến động |
 | 04 | `ndvi.html` | NDVI phân cấp 2017, 2025 và biến động cấp |
+| 05 | `hotspot.html` | Quan hệ LST – NDVI, điểm nóng cần can thiệp |
 
 ## Dữ liệu
 
@@ -30,6 +31,7 @@ python build_data.py
 python build_normalized.py
 python build_builtup.py
 python build_ndvi.py
+python build_hotspot.py
 ```
 
 Xem thử trên máy: `python -m http.server 8765` rồi mở http://localhost:8765

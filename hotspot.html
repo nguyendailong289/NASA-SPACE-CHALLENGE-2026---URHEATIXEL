@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Urheatixel · Điểm nóng LST – NDVI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/base.css">
+<script src="assets/theme.js"></script>
+<link rel="stylesheet" href="assets/sections.css">
+<style>
+:root{ --hl:#EF4444; --ext:#DC2626; --urg:#F97316; }
+.final .empty{display:grid;place-items:center;height:100%;color:var(--muted);font-size:15px;padding:24px}
+.dl[aria-disabled="true"]{background:var(--surface-2);color:var(--muted);pointer-events:none;box-shadow:inset 0 0 0 1px var(--border)}
+.kpi.urg{border-color:color-mix(in srgb,var(--urg) 55%,var(--border))}
+.kpi.urg .val{color:var(--urg)}
+.rule{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:8px;max-width:900px}
+@media (max-width:640px){.rule{grid-template-columns:1fr}}
+.rule div{padding:12px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--border);display:grid;gap:4px;font-size:14px}
+.rule b{display:flex;align-items:center;gap:8px;font-size:15px}
+.rule b i{width:12px;height:12px;border-radius:3px}
+.rule span{color:var(--muted)}
+.tables.two{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
+@media (max-width:1000px){.tables.two{grid-template-columns:1fr}}
+.matrix{border-collapse:separate;border-spacing:3px;width:100%;font-size:13px}
+.matrix th,.matrix td{border:0;padding:8px 6px;text-align:center;white-space:nowrap}
+.matrix th{font-size:11px;letter-spacing:.04em}
+.matrix th.rh{text-align:right;padding-right:10px}
+.matrix td{border-radius:6px;font-family:var(--mono);line-height:1.3;background:var(--surface-2)}
+.matrix td small{display:block;font-size:11px;opacity:.75}
+.matrix td.zero{color:var(--muted);opacity:.5}
+.matrix .axis{font-size:12px;color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0}
+.tcard .head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.seg.sm button{padding:6px 12px;min-height:32px;font-family:var(--mono)}
+#scatter{width:100%;height:auto;display:block}
+#scatter text{font-family:var(--sans)}
+.rank td:nth-child(2){font-family:var(--sans);white-space:normal}
+.rank .bar{display:inline-flex;height:10px;border-radius:3px;overflow:hidden;vertical-align:middle;margin-right:8px;background:var(--surface-2);width:90px}
+.rank .bar i{display:block;height:100%}
+.insights{margin:0;padding:0;list-style:none;display:grid;gap:12px}
+.insights li{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;font-size:15px}
+.insights li span.n{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--surface-2);font-family:var(--mono);font-weight:600;color:var(--accent);font-size:13px}
+.insights b{font-weight:600}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">
+    <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true">
+      <rect width="36" height="36" rx="9" fill="#17223a"/>
+      <rect x="7" y="7" width="7" height="7" fill="#3B82F6"/><rect x="14.5" y="7" width="7" height="7" fill="#FBBF24"/><rect x="22" y="7" width="7" height="7" fill="#F97316"/>
+      <rect x="7" y="14.5" width="7" height="7" fill="#FBBF24"/><rect x="14.5" y="14.5" width="7" height="7" fill="#EF4444"/><rect x="22" y="14.5" width="7" height="7" fill="#F97316"/>
+      <rect x="7" y="22" width="7" height="7" fill="#60A5FA"/><rect x="14.5" y="22" width="7" height="7" fill="#F97316"/><rect x="22" y="22" width="7" height="7" fill="#FBBF24"/>
+    </svg>
+    <div>
+      <h1>Urheatixel</h1>
+      <p>Quan hệ LST – NDVI &amp; điểm nóng cần can thiệp · Hà Nội · 2017 &amp; 2025</p>
+    </div>
+  </a>
+  <div class="top-right">
+    <nav class="parts" aria-label="Các phần">
+      <a href="daily.html"><b>01</b><span class="lb">Nhiệt độ bề mặt</span><span class="sh">LST</span></a>
+      <a href="normalized.html"><b>02</b><span class="lb">LST chuẩn hóa</span><span class="sh">Chuẩn hóa</span></a>
+      <a href="builtup.html"><b>03</b><span class="lb">Đất xây dựng</span><span class="sh">Xây dựng</span></a>
+      <a href="ndvi.html"><b>04</b><span class="lb">Thực vật NDVI</span><span class="sh">NDVI</span></a>
+      <a href="hotspot.html" aria-current="page"><b>05</b><span class="lb">Điểm nóng</span><span class="sh">Điểm nóng</span></a>
+    </nav>
+    <button class="icon-btn" id="themeBtn" aria-label="Đổi giao diện sáng/tối">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="intro">
+    <div class="eyebrow">PHẦN 05 · ĐIỂM NÓNG CẦN CAN THIỆP</div>
+    <h2>Nơi nóng nhất lại ít cây xanh nhất: những khu vực Hà Nội cần ưu tiên can thiệp</h2>
+    <p>Chồng lớp <b>LST chuẩn hóa</b> (Phần 02) và <b>NDVI chuẩn hóa</b> (Phần 04) trên cùng lưới 1 km. Mỗi pixel được xếp mức ưu tiên theo hai điều kiện bất lợi: <b>nhiệt độ bề mặt rất cao</b> và <b>thiếu thảm thực vật</b>.</p>
+    <div class="rule">
+      <div><b><i style="background:var(--ext)"></i>Cực kỳ khẩn cấp</b><span>Cả hai điều kiện: LST Very High (cấp 5, 0,8 – 1,0) <b style="display:inline">và</b> NDVI thấp (cấp 1–2, 0,0 – 0,4).</span></div>
+      <div><b><i style="background:var(--urg)"></i>Khẩn cấp</b><span>Một trong hai: LST Very High nhưng NDVI ≥ Moderate, <b style="display:inline">hoặc</b> NDVI thấp kèm LST High (cấp 4).</span></div>
+    </div>
+  </section>
+
+  <!-- ============ BẢN ĐỒ ============ -->
+  <section aria-labelledby="secMap">
+    <h2 class="sec-title" id="secMap">Bản đồ điểm nóng <span>pixel 1 km · kéo / cuộn để phóng to</span></h2>
+    <div class="card map-shell">
+      <div class="map-main">
+        <div class="map-bar">
+          <div class="seg" role="group" aria-label="Chọn lớp">
+            <button data-layer="hot_2025" aria-pressed="true">Điểm nóng 2025</button>
+            <button data-layer="hot_2017" aria-pressed="false">Điểm nóng 2017</button>
+            <button data-layer="hot_change" aria-pressed="false">Biến động 2017–2025</button>
+          </div>
+          <div class="seg" role="group" aria-label="Kiểu hiển thị">
+            <button data-view="raster" aria-pressed="true">Lớp raster</button>
+            <button data-view="final" aria-pressed="false">Bản đồ kết quả</button>
+          </div>
+        </div>
+        <div class="view" id="view" data-view="raster">
+          <div id="map" role="region" aria-label="Bản đồ điểm nóng LST – NDVI"></div>
+          <div class="final"><div class="empty">Bản đồ kết quả cho phần này sẽ được bổ sung.</div></div>
+        </div>
+      </div>
+      <div class="map-side">
+        <div>
+          <p class="title" id="lyTitle">–</p>
+          <p class="sub" id="lySub">–</p>
+        </div>
+        <div>
+          <h3>Chú giải</h3>
+          <ul class="legend" id="legend"></ul>
+        </div>
+        <div id="boundaryBox">
+          <h3>Ranh giới</h3>
+          <label class="layer"><input type="checkbox" id="lyTinh" checked> Ranh giới tỉnh</label>
+          <label class="layer"><input type="checkbox" id="lyXa" checked> Ranh giới xã (126 đơn vị)</label>
+        </div>
+        <div style="display:grid;gap:8px">
+          <a class="dl" aria-disabled="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+            Tải bản đồ <small>· sẽ bổ sung</small>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THỐNG KÊ ============ -->
+  <section aria-labelledby="secStat">
+    <h2 class="sec-title" id="secStat">Kết quả thống kê &amp; phân tích <span>năm 2025, so với 2017</span></h2>
+    <div class="kpis">
+      <div class="card kpi hl"><span class="lbl">Cực kỳ khẩn cấp 2025</span><span class="val" id="kExt">–</span><span class="sub" id="kExtS">–</span></div>
+      <div class="card kpi urg"><span class="lbl">Khẩn cấp 2025</span><span class="val" id="kUrg">–</span><span class="sub" id="kUrgS">–</span></div>
+      <div class="card kpi"><span class="lbl">Tương quan LST – NDVI 2025</span><span class="val" id="kR">–</span><span class="sub" id="kRS">–</span></div>
+      <div class="card kpi"><span class="lbl">Xã/phường có điểm nóng cực kỳ khẩn cấp</span><span class="val" id="kXa">–</span><span class="sub" id="kXaS">–</span></div>
+    </div>
+
+    <div class="tables two">
+      <div class="card tcard">
+        <div class="head"><h3>Quan hệ LST – NDVI chuẩn hóa (mỗi điểm là 1 pixel 1 km)</h3>
+          <div class="seg sm" role="group" aria-label="Năm của biểu đồ"><button data-sy="2017" aria-pressed="false">2017</button><button data-sy="2025" aria-pressed="true">2025</button></div></div>
+        <svg id="scatter" viewBox="0 0 560 420" role="img"></svg>
+        <p id="scNote"></p>
+      </div>
+      <div class="card tcard">
+        <div class="head"><h3>Bảng 10. Chồng lớp cấp LST × cấp NDVI (km²)</h3>
+          <div class="seg sm" role="group" aria-label="Năm của ma trận"><button data-my="2017" aria-pressed="false">2017</button><button data-my="2025" aria-pressed="true">2025</button></div></div>
+        <div class="tbl-wrap"><table class="matrix" id="matrix"></table></div>
+        <p>Hàng là cấp LST, cột là cấp NDVI. Ô đỏ là <b>cực kỳ khẩn cấp</b>, ô cam là <b>khẩn cấp</b>. Không có pixel nào vừa LST Very High vừa NDVI Very High; NDVI Very Low chủ yếu là mặt nước nên mát.</p>
+      </div>
+    </div>
+
+    <div class="tables two">
+      <div class="card tcard">
+        <h3>Bảng 11. Xã/phường ưu tiên can thiệp năm 2025</h3>
+        <div class="tbl-wrap"><table class="rank">
+          <thead><tr><th>#</th><th>Xã/phường</th><th>Cực kỳ KC (km²)</th><th>Khẩn cấp (km²)</th><th>% diện tích xã</th><th>2017 (km²)</th></tr></thead>
+          <tbody id="tbRank"></tbody>
+        </table></div>
+        <p id="rankNote"></p>
+      </div>
+      <div class="card tcard">
+        <h3>Bảng 12. Biến động điểm nóng 2017 → 2025</h3>
+        <div class="comp" id="comp" role="img"></div>
+        <div class="comp-legend" id="compLegend"></div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Mức</th><th>2017 (km²)</th><th>2025 (km²)</th><th>Thay đổi</th></tr></thead>
+          <tbody id="tbLv"></tbody>
+        </table></div>
+        <h3 style="margin-top:8px">Nhận định chính</h3>
+        <ol class="insights" id="insights"></ol>
+      </div>
+    </div>
+
+    <div class="card link-card">
+      <p>Mức ưu tiên dựa trên LST và NDVI <b>chuẩn hóa trong từng năm</b>, nên phản ánh vị trí tương đối của mỗi pixel trong thành phố. Ngưỡng có thể điều chỉnh trong <code>build_hotspot.py</code> (biến <code>EXT_LST</code>, <code>LOW_NDVI</code>).</p>
+      <a href="index.html">Về trang bìa
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
+    </div>
+  </section>
+</main>
+<footer>Urheatixel · NASA Space Apps Challenge Hanoi 2026 · Dữ liệu: NASA MODIS MOD11A1 &amp; MOD13A2 v061 (1 km)</footer>
+<div class="comp-tip" id="compTip"></div>
+<div class="px-tip" id="pxTip"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="data/hotspot/hotspot_meta.js"></script>
+<script>
+(() => {
+const D = window.HOT;
+const W = D.width, H = D.height, [lonMin, latMin, lonMax, latMax] = D.bounds;
+const dx = (lonMax - lonMin) / W, dy = (latMax - latMin) / H;
+const SX = Math.cos((latMin + latMax) / 2 * Math.PI / 180) * dx / dy;
+const T = D.totalKm2;
+const f1 = (v, d = 1) => v.toLocaleString('vi-VN', { minimumFractionDigits:d, maximumFractionDigits:d });
+const pct = (v, base = T) => f1(v / base * 100, 1) + '%';
+const hex = h => [1,3,5].map(i => parseInt(h.slice(i, i + 2), 16));
+const cls = v => Math.min(5, Math.max(1, Math.ceil(Math.round(v * 1e6) / 1e6 / 0.2)));
+const NAMES = ['Very Low','Low','Moderate','High','Very High'];
+const LV = [
+  { name:'Không ưu tiên', color:'#CBD5E1', a:110 },
+  { name:'Khẩn cấp', color:'#F97316', a:255 },
+  { name:'Cực kỳ khẩn cấp', color:'#DC2626', a:255 },
+];
+const CH = [
+  { name:'Không phải điểm nóng', color:'#CBD5E1', a:110 },
+  { name:'Không còn ở 2025', color:'#60A5FA', a:255 },
+  { name:'Mới xuất hiện 2025', color:'#F97316', a:255 },
+  { name:'Duy trì cả hai năm', color:'#DC2626', a:255 },
+];
+const Y = D.years, xaName = i => D.pixXa[i] >= 0 ? D.xa[D.pixXa[i]].ten : 'Hà Nội';
+
+/* ---------- Ảnh raster ---------- */
+const urls = {};
+function rasterUrl(key){
+  if (urls[key]) return urls[key];
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const cx = cv.getContext('2d'), img = cx.createImageData(W, H);
+  const arr = key === 'hot_change' ? D.change : Y[key.slice(-4)].level, pal = key === 'hot_change' ? CH : LV;
+  for (let i = 0; i < W * H; i++){ const v = arr[i]; if (v < 0) continue; const p = pal[v]; img.data.set([...hex(p.color), p.a], i * 4); }
+  cx.putImageData(img, 0, 0);
+  return urls[key] = cv.toDataURL();
+}
+
+/* ---------- Bản đồ ---------- */
+const map = L.map('map', { crs: L.CRS.Simple, minZoom: 0, maxZoom: 6, zoomSnap: 0.25, zoomDelta: 0.5, attributionControl: false, preferCanvas: true });
+const bounds = [[-H, 0], [0, W * SX]];
+const overlay = L.imageOverlay(rasterUrl('hot_2025'), bounds).addTo(map);
+map.fitBounds(bounds); map.setMaxBounds(L.latLngBounds(bounds).pad(0.3));
+const P = ([lon, lat]) => [-(latMax - lat) / dy, (lon - lonMin) / dx * SX];
+const xa = L.layerGroup(D.xa.map(x => L.polyline(x.rings.map(r => r.map(P)), { color:'#ffffff', weight:0.8, opacity:0.7, interactive:false }))).addTo(map);
+const tinh = L.polyline(D.tinh.map(r => r.map(P)), { color:'#ffffff', weight:2.5, interactive:false }).addTo(map);
+document.getElementById('lyTinh').onchange = e => e.target.checked ? tinh.addTo(map) : tinh.remove();
+document.getElementById('lyXa').onchange = e => e.target.checked ? xa.addTo(map) : xa.remove();
+
+const LAYERS = {
+  hot_2025: { title:'Điểm nóng năm 2025', sub:'Mức ưu tiên can thiệp theo LST và NDVI chuẩn hóa', pal:LV, km:Y['2025'].levelKm2 },
+  hot_2017: { title:'Điểm nóng năm 2017', sub:'Mức ưu tiên can thiệp theo LST và NDVI chuẩn hóa', pal:LV, km:Y['2017'].levelKm2 },
+  hot_change: { title:'Biến động điểm nóng 2017 → 2025', sub:'Điểm nóng = khẩn cấp hoặc cực kỳ khẩn cấp', pal:CH, km:D.changeKm2 },
+};
+let cur = 'hot_2025';
+function setLayer(key){
+  cur = key; overlay.setUrl(rasterUrl(key));
+  document.querySelectorAll('button[data-layer]').forEach(b => b.setAttribute('aria-pressed', b.dataset.layer === key));
+  const l = LAYERS[key];
+  document.getElementById('lyTitle').textContent = l.title;
+  document.getElementById('lySub').textContent = l.sub;
+  document.getElementById('legend').innerHTML = l.pal.map((p, v) => [p, v]).reverse().map(([p, v]) =>
+    `<li><span class="sw" style="background:${p.color}"></span><span class="nm">${p.name}</span><span class="px">${f1(l.km[v])} km²</span></li>`).join('');
+}
+function setView(v){
+  document.getElementById('view').dataset.view = v;
+  document.querySelectorAll('button[data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === v));
+  document.getElementById('boundaryBox').style.display = v === 'raster' ? '' : 'none';
+  if (v === 'raster') map.invalidateSize();
+}
+document.querySelectorAll('button[data-layer]').forEach(b => b.onclick = () => setLayer(b.dataset.layer));
+document.querySelectorAll('button[data-view]').forEach(b => b.onclick = () => setView(b.dataset.view));
+
+/* ---------- Tooltip theo pixel ---------- */
+const pxTip = document.getElementById('pxTip');
+const hl = L.rectangle([[0,0],[0,0]], { color:'#22D3EE', weight:2.5, fill:false, interactive:false });
+function hidePx(){ pxTip.style.display = 'none'; hl.remove(); }
+map.on('mousemove click', e => {
+  const row = Math.floor(-e.latlng.lat), col = Math.floor(e.latlng.lng / SX);
+  if (row < 0 || col < 0 || row >= H || col >= W) return hidePx();
+  const i = row * W + col;
+  if (Y['2025'].level[i] < 0) return hidePx();
+  const lat = latMax - (row + .5) * dy, lon = lonMin + (col + .5) * dx;
+  const line = y => { const l = Y[y].lstN[i], n = Y[y].ndviN[i], lv = LV[Y[y].level[i]];
+    return `<div class="row${cur === 'hot_' + y ? ' on' : ''}" style="grid-template-columns:40px 12px auto"><span>${y}</span><i style="background:${lv.color}"></i><span>${lv.name}</span></div>` +
+      `<div class="co" style="padding-left:58px">LST ${f1(l, 2)} (${NAMES[cls(l) - 1]}) · NDVI ${f1(n, 2)} (${NAMES[cls(n) - 1]})</div>`; };
+  pxTip.innerHTML = `<div class="nm">${xaName(i)}</div><div class="co">${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E · ô 1 km</div>` +
+    line('2025') + line('2017') +
+    `<div class="row${cur === 'hot_change' ? ' on' : ''}" style="grid-template-columns:40px 12px auto;margin-top:2px"><span>Đổi</span><i style="background:${CH[D.change[i]].color}"></i><span>${CH[D.change[i]].name}</span></div>`;
+  pxTip.style.display = 'block';
+  const ev = e.originalEvent, tw = pxTip.offsetWidth, th = pxTip.offsetHeight;
+  let tx = ev.clientX + 16, ty = ev.clientY + 16;
+  if (tx + tw > innerWidth - 8) tx = ev.clientX - tw - 16;
+  if (ty + th > innerHeight - 8) ty = ev.clientY - th - 16;
+  pxTip.style.left = tx + 'px'; pxTip.style.top = ty + 'px';
+  hl.setBounds([[-row - 1, col * SX], [-row, (col + 1) * SX]]); if (!map.hasLayer(hl)) hl.addTo(map);
+});
+map.on('mouseout dragstart zoomstart', hidePx);
+
+/* ---------- KPI ---------- */
+const y25 = Y['2025'], y17 = Y['2017'];
+const nf = n => n.toLocaleString('vi-VN');
+document.getElementById('kExt').innerHTML = f1(y25.levelKm2[2]) + '<small>km²</small>';
+document.getElementById('kExtS').innerHTML = `${nf(y25.levelPx[2])} pixel · 2017: <b>${f1(y17.levelKm2[2])} km²</b>`;
+document.getElementById('kUrg').innerHTML = f1(y25.levelKm2[1]) + '<small>km²</small>';
+document.getElementById('kUrgS').innerHTML = `${nf(y25.levelPx[1])} pixel · 2017: <b>${f1(y17.levelKm2[1])} km²</b>`;
+document.getElementById('kR').innerHTML = 'r = ' + f1(y25.pearson, 2);
+document.getElementById('kRS').innerHTML = `2017: <b>r = ${f1(y17.pearson, 2)}</b> · tương quan nghịch`;
+const xaExt = y => Y[y].xa.filter(s => s.ext > 0).length;
+document.getElementById('kXa').textContent = xaExt('2025');
+document.getElementById('kXaS').innerHTML = `trên 126 · 2017: <b>${xaExt('2017')}</b>`;
+
+/* ---------- Biểu đồ tán xạ ---------- */
+const sv = document.getElementById('scatter');
+function scatter(y){
+  document.querySelectorAll('[data-sy]').forEach(b => b.setAttribute('aria-pressed', b.dataset.sy === y));
+  const d = Y[y], x0 = 56, yb = 372, w = 480, h = 330;
+  const X = v => x0 + v * w, Yp = v => yb - v * h;
+  let s = `<rect x="${X(0)}" y="${Yp(1)}" width="${w * 0.4}" height="${h * 0.2}" fill="#DC2626" fill-opacity=".12"/>`;
+  [0, .2, .4, .6, .8, 1].forEach(t => {
+    s += `<line x1="${X(t)}" x2="${X(t)}" y1="${Yp(0)}" y2="${Yp(1)}" stroke="var(--border)"/><line x1="${X(0)}" x2="${X(1)}" y1="${Yp(t)}" y2="${Yp(t)}" stroke="var(--border)"/>`;
+    s += `<text x="${X(t)}" y="${yb + 18}" text-anchor="middle" font-size="11" fill="var(--muted)">${f1(t, 1)}</text><text x="${x0 - 8}" y="${Yp(t) + 4}" text-anchor="end" font-size="11" fill="var(--muted)">${f1(t, 1)}</text>`;
+  });
+  const pts = [[], [], []];
+  for (let i = 0; i < W * H; i++){ const lv = d.level[i]; if (lv < 0) continue; pts[lv].push(`<circle cx="${X(d.ndviN[i]).toFixed(1)}" cy="${Yp(d.lstN[i]).toFixed(1)}" r="${lv ? 2.6 : 1.8}"/>`); }
+  s += `<g fill="#94A3B8" fill-opacity=".35">${pts[0].join('')}</g><g fill="#F97316">${pts[1].join('')}</g><g fill="#DC2626">${pts[2].join('')}</g>`;
+  s += `<line x1="${X(0)}" y1="${Yp(d.intercept)}" x2="${X(1)}" y2="${Yp(d.intercept + d.slope)}" stroke="var(--fg)" stroke-width="2" stroke-dasharray="6 4"/>`;
+  s += `<text x="${X(0.4) + 6}" y="${Yp(1) + 16}" font-size="12" font-weight="600" fill="#DC2626">Nóng + ít cây xanh</text>`;
+  s += `<text x="${X(1)}" y="${Yp(d.intercept + d.slope) - 8}" text-anchor="end" font-size="12" fill="var(--fg)">r = ${f1(d.pearson, 2)}</text>`;
+  s += `<text x="${X(0.5)}" y="${yb + 40}" text-anchor="middle" font-size="12" fill="var(--muted)">NDVI chuẩn hóa (nhiều cây xanh →)</text>`;
+  s += `<text transform="translate(16 ${Yp(0.5)}) rotate(-90)" text-anchor="middle" font-size="12" fill="var(--muted)">LST chuẩn hóa (nóng hơn →)</text>`;
+  sv.innerHTML = s;
+  sv.setAttribute('aria-label', `Biểu đồ tán xạ LST và NDVI chuẩn hóa năm ${y}, hệ số tương quan ${f1(d.pearson, 2)}`);
+  document.getElementById('scNote').innerHTML = `Năm ${y}: hệ số tương quan Pearson <b>r = ${f1(d.pearson, 2)}</b> (Spearman ${f1(d.spearman, 2)}). ` +
+    `Đường hồi quy: LST = ${f1(d.intercept, 2)} ${d.slope < 0 ? '−' : '+'} ${f1(Math.abs(d.slope), 2)} × NDVI. Vùng tô đỏ là góc "nóng + ít cây xanh".`;
+}
+document.querySelectorAll('[data-sy]').forEach(b => b.onclick = () => scatter(b.dataset.sy));
+
+/* ---------- Ma trận LST × NDVI ---------- */
+function matrix(y){
+  document.querySelectorAll('[data-my]').forEach(b => b.setAttribute('aria-pressed', b.dataset.my === y));
+  const d = Y[y], ext = D.rule.extLst, low = D.rule.lowNdvi;
+  let mx = `<thead><tr><th class="rh axis">LST ↓ / NDVI →</th>${NAMES.map(n => `<th>${n}</th>`).join('')}</tr></thead><tbody>`;
+  for (let r = 5; r >= 1; r--){
+    mx += `<tr><th class="rh">${NAMES[r - 1]}</th>`;
+    for (let c = 1; c <= 5; c++){
+      const px = d.cross[r - 1][c - 1], km = d.crossKm2[r - 1][c - 1];
+      const lv = (r >= ext && c <= low) ? 2 : ((r >= ext) || (c <= low && r === ext - 1)) ? 1 : 0;
+      const st = lv ? `background:${LV[lv].color};color:#fff` : '';
+      mx += px ? `<td style="${st}" title="LST ${NAMES[r - 1]} × NDVI ${NAMES[c - 1]}: ${f1(km)} km² · ${px} pixel">${f1(km)}<small>${px} px</small></td>`
+               : `<td class="zero" style="${lv ? `box-shadow:inset 0 0 0 2px ${LV[lv].color}` : ''}">–</td>`;
+    }
+    mx += '</tr>';
+  }
+  document.getElementById('matrix').innerHTML = mx + '</tbody>';
+}
+document.querySelectorAll('[data-my]').forEach(b => b.onclick = () => matrix(b.dataset.my));
+
+/* ---------- Xếp hạng xã/phường ---------- */
+const prev = Object.fromEntries(y17.xa.map(s => [s.k, s.ext + s.urg]));
+const ranked = y25.xa.filter(s => s.ext + s.urg > 0).sort((a, b) => (b.ext - a.ext) || (b.urg - a.urg) || ((b.ext + b.urg) / b.km2 - (a.ext + a.urg) / a.km2));
+const top = ranked.slice(0, 15), maxA = Math.max(...top.map(s => s.ext + s.urg));
+document.getElementById('tbRank').innerHTML = top.map((s, i) =>
+  `<tr><td>${i + 1}</td><td><span class="bar" style="width:${90 * (s.ext + s.urg) / maxA}px"><i style="width:${s.ext / (s.ext + s.urg) * 100}%;background:#DC2626"></i><i style="width:${s.urg / (s.ext + s.urg) * 100}%;background:#F97316"></i></span>${D.xa[s.k].ten}</td>` +
+  `<td>${f1(s.ext)}</td><td>${f1(s.urg)}</td><td>${pct(s.ext + s.urg, s.km2)}</td><td>${f1(prev[s.k] || 0)}</td></tr>`).join('');
+document.getElementById('rankNote').innerHTML = `Có <b>${ranked.length}</b> xã/phường có điểm nóng năm 2025; bảng hiện 15 đơn vị đứng đầu, xếp theo diện tích cực kỳ khẩn cấp rồi khẩn cấp. Xã/phường của mỗi pixel xác định theo tâm pixel 1 km.`;
+
+/* ---------- Biến động điểm nóng ---------- */
+const comp = document.getElementById('comp'), tip = document.getElementById('compTip');
+[3, 2, 1].forEach(v => {
+  const el = document.createElement('div'); el.style.flex = D.changeKm2[v]; el.style.background = CH[v].color;
+  el.addEventListener('pointermove', e => { tip.innerHTML = `${CH[v].name}<br><b>${f1(D.changeKm2[v])} km²</b> · ${nf(D.changePx[v])} pixel`;
+    tip.style.display = 'block'; tip.style.left = Math.min(e.clientX + 12, innerWidth - tip.offsetWidth - 8) + 'px'; tip.style.top = (e.clientY + 14) + 'px'; });
+  el.addEventListener('pointerleave', () => tip.style.display = 'none');
+  comp.appendChild(el);
+});
+comp.setAttribute('aria-label', 'Biến động điểm nóng: ' + [3, 2, 1].map(v => `${CH[v].name} ${f1(D.changeKm2[v])} km²`).join(', '));
+document.getElementById('compLegend').innerHTML = [3, 2, 1].map(v => `<span><i style="background:${CH[v].color}"></i>${CH[v].name} · ${f1(D.changeKm2[v])} km²</span>`).join('');
+document.getElementById('tbLv').innerHTML = [2, 1].map(v => { const a = y17.levelKm2[v], b = y25.levelKm2[v], d = b - a;
+  return `<tr><td><span class="sw" style="background:${LV[v].color}"></span>${LV[v].name}</td><td>${f1(a)}</td><td>${f1(b)}</td><td class="${d > 0 ? 'neg' : ''}" style="color:${d > 0 ? 'var(--hl)' : 'var(--y17)'}">${d > 0 ? '+' : ''}${f1(d)} km² (${d > 0 ? '+' : ''}${f1(d / a * 100, 0)}%)</td></tr>`; }).join('');
+
+/* ---------- Nhận định (tính từ số liệu) ---------- */
+const hot = y => Y[y].levelKm2[1] + Y[y].levelKm2[2];
+const persist = D.changeKm2[3], hot25 = hot('2025');
+const top5 = top.slice(0, 5).map(s => D.xa[s.k].ten.replace(/^(Phường|Xã) /, '')).join(', ');
+const items = [
+  `Quan hệ nghịch giữa nhiệt độ bề mặt và thảm thực vật <b>mạnh lên</b>: r từ ${f1(y17.pearson, 2)} (2017) xuống <b>${f1(y25.pearson, 2)}</b> (2025). Nơi ít cây xanh ngày càng nóng hơn tương đối.`,
+  `Tổng diện tích điểm nóng tăng từ ${f1(hot('2017'))} km² lên <b>${f1(hot25)} km²</b> (+${f1((hot25 - hot('2017')) / hot('2017') * 100, 0)}%); riêng cực kỳ khẩn cấp từ ${f1(y17.levelKm2[2])} lên <b>${f1(y25.levelKm2[2])} km²</b>.`,
+  `<b>${pct(persist, hot25)}</b> diện tích điểm nóng 2025 (${f1(persist)} km²) đã là điểm nóng từ 2017: đây là các điểm nóng kéo dài, cần ưu tiên can thiệp trước.`,
+  `Điểm nóng cực kỳ khẩn cấp tập trung ở các phường nội đô: <b>${top5}</b>.`,
+  `Hướng can thiệp gợi ý cho các ô đỏ: tăng cây xanh, mặt nước và vật liệu mát (mái, mặt đường phản xạ nhiệt) tại các phường trên; với ô cam, giữ lại thảm thực vật hiện có và hạn chế bê tông hóa thêm.`,
+];
+document.getElementById('insights').innerHTML = items.map((t, i) => `<li><span class="n">${i + 1}</span><span>${t}</span></li>`).join('');
+
+setLayer('hot_2025'); scatter('2025'); matrix('2025');
+})();
+</script>
+</body>
+</html>

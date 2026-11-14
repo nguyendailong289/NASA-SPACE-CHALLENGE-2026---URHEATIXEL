@@ -66,8 +66,9 @@ main{max-width:1280px;margin:0 auto;padding:0 24px}
 .sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 20px}
 .sec-h h2{margin:0;font-size:clamp(22px,2.6vw,28px);font-weight:700}
 .sec-h p{margin:0;color:var(--muted)}
-.parts-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;padding-bottom:64px}
-@media (max-width:1100px){.parts-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.parts-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;padding-bottom:64px}
+@media (max-width:1200px){.parts-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:900px){.parts-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:640px){.parts-grid{grid-template-columns:1fr}}
 .part{display:grid;grid-template-rows:auto 1fr;overflow:hidden;text-decoration:none;color:inherit;transition:border-color .2s,transform .2s,box-shadow .2s}
 .part:hover{border-color:color-mix(in srgb,var(--accent) 60%,var(--border));transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.25)}
@@ -115,6 +116,7 @@ footer.foot a:hover{text-decoration:underline}
       <a href="normalized.html"><b>02</b><span class="lb">LST chuẩn hóa</span><span class="sh">Chuẩn hóa</span></a>
       <a href="builtup.html"><b>03</b><span class="lb">Đất xây dựng</span><span class="sh">Xây dựng</span></a>
       <a href="ndvi.html"><b>04</b><span class="lb">Thực vật NDVI</span><span class="sh">NDVI</span></a>
+      <a href="hotspot.html"><b>05</b><span class="lb">Điểm nóng</span><span class="sh">Điểm nóng</span></a>
     </nav>
     <button class="icon-btn" id="themeBtn" aria-label="Đổi giao diện sáng/tối">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
@@ -161,7 +163,7 @@ footer.foot a:hover{text-decoration:underline}
   </section>
 
   <section aria-labelledby="partsH">
-    <div class="sec-h"><h2 id="partsH">Bốn phần của câu chuyện</h2><p>Di chuột lên bản đồ để xem giá trị từng pixel</p></div>
+    <div class="sec-h"><h2 id="partsH">Năm phần của câu chuyện</h2><p>Di chuột lên bản đồ để xem giá trị từng pixel</p></div>
     <div class="parts-grid">
       <a class="card part" href="daily.html">
         <div class="img"><img src="assets/maps/lst_mean_2017_card.jpg" alt="" loading="lazy"></div>
@@ -186,6 +188,12 @@ footer.foot a:hover{text-decoration:underline}
         <div class="body"><span class="no">PHẦN 04</span><h3>Thảm thực vật NDVI</h3>
           <p>NDVI phân cấp năm 2017 và 2025 từ MODIS; chồng hai lớp để thấy nơi thực vật giảm, giữ nguyên hay tăng cấp.</p>
           <span class="go">Mở phần 04 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></div>
+      </a>
+      <a class="card part" href="hotspot.html">
+        <div class="img"><img src="assets/maps/hotspot_card.png" alt="" loading="lazy" style="object-fit:contain"></div>
+        <div class="body"><span class="no">PHẦN 05</span><h3>Điểm nóng cần can thiệp</h3>
+          <p>Chồng LST và NDVI chuẩn hóa: nơi vừa rất nóng vừa thiếu cây xanh là điểm nóng cực kỳ khẩn cấp.</p>
+          <span class="go">Mở phần 05 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></div>
       </a>
     </div>
   </section>
