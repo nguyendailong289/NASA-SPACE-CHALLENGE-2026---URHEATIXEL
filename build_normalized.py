@@ -29,6 +29,7 @@ R_EARTH = 6371008.8
 MAPS = {  # khoá trên web -> file bản đồ kết quả
     "mean_2017": "LST_Mean_2017.png", "mean_2025": "LST_Mean_2025.png",
     "class_2017": "LST_Classification_2017.png", "class_2025": "LST_Classification_2025.png",
+    "change": "LST_Classification_2017_2025.png",
 }
 
 

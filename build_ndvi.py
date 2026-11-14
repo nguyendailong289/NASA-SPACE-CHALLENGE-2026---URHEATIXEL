@@ -29,9 +29,9 @@ R_EARTH = 6371008.8
 
 # khoá trên web -> file bản đồ kết quả (bổ sung khi có, thiếu thì bỏ qua)
 MAPS = {
-    "ndvi_2017": "NDVI_Classification_2017.png",
-    "ndvi_2025": "NDVI_Classification_2025.png",
-    "ndvi_change": "NDVI_Classification_2017_2025.png",
+    "ndvi_2017": "NDVI_classification_2017.png",
+    "ndvi_2025": "NDVI_classification_2025.png",
+    "ndvi_change": "NDVI_classification_2017_2025.png",
 }
 
 
@@ -108,6 +108,10 @@ def main():
     card = Image.new("RGBA", (side, side), (0, 0, 0, 0))
     card.paste(img, ((side - img.size[0]) // 2, (side - img.size[1]) // 2))
     card.save(os.path.join(MAPS_OUT, "ndvi_change_card.png"), optimize=True)
+    # Có bản đồ biến động thì dùng ảnh cắt vùng Hà Nội từ bản đồ (giống các thẻ khác)
+    chg_map = os.path.join(RESULTS, MAPS["ndvi_change"])
+    if os.path.exists(chg_map):
+        Image.open(chg_map).convert("RGB").crop((180, 110, 2340, 2270)).resize((800, 800), Image.LANCZOS)             .save(os.path.join(MAPS_OUT, "ndvi_change_card.jpg"), quality=82)
 
     out = os.path.join(OUT, "ndvi_meta.js")
     with open(out, "w", encoding="utf-8") as fh:

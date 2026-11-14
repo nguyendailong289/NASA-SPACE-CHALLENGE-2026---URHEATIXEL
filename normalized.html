@@ -45,7 +45,7 @@ td.pos{color:var(--hl)} td.neg{color:var(--y17)}
 .matrix th.rh{text-align:right;padding-right:10px}
 .matrix td{border-radius:6px;font-family:var(--mono);line-height:1.3;cursor:default;position:relative}
 .matrix td small{display:block;font-size:11px;opacity:.75}
-.matrix td.diag{box-shadow:inset 0 0 0 2px var(--fg)}
+.matrix td.diag{box-shadow:0 0 0 2px var(--accent)}
 .matrix td.zero{color:var(--muted);opacity:.5}
 .matrix .axis{font-size:12px;color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0}
 .chg-sum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -181,7 +181,7 @@ td.pos{color:var(--hl)} td.neg{color:var(--y17)}
         <h3>Bảng 4. Ma trận biến động phân cấp LST chuẩn hóa 2017 → 2025 (km²)</h3>
         <div class="chg-sum" id="chgSum"></div>
         <div class="tbl-wrap"><table class="matrix" id="matrix"></table></div>
-        <p>Hàng là cấp năm 2017, cột là cấp năm 2025. Ô có viền là các pixel <b>giữ nguyên cấp</b>. Màu cam/đỏ là tăng cấp, màu xanh là giảm cấp; ô càng đậm thì diện tích càng lớn.</p>
+        <p>Hàng là cấp năm 2017, cột là cấp năm 2025. Ô có viền là các pixel <b>giữ nguyên cấp</b>; ô phía trên bên phải đường chéo là tăng cấp, phía dưới bên trái là giảm cấp. Màu ô trùng màu mã trên bản đồ.</p>
       </div>
       <div class="card tcard">
         <h3>Bảng 5. Diện tích theo mã biến động (11 – 55)</h3>
@@ -243,6 +243,9 @@ const DELTA = {
 const transCode = i => N.years['2017'].cls[i] * 10 + N.years['2025'].cls[i];
 const deltaOf = code => Math.max(-2, Math.min(2, (code % 10) - Math.floor(code / 10)));
 const deltaKm2 = {}; for (const [code, v] of Object.entries(N.trans)){ const d = deltaOf(+code); deltaKm2[d] = (deltaKm2[d] || 0) + v.km2; }
+// Màu từng mã biến động, lấy từ bản đồ kết quả (QGIS Map_LST_Change)
+const TCOLOR = { 11:'#0a0822', 12:'#1d1047', 13:'#36106a', 21:'#50127b', 22:'#6a1c81', 23:'#822581', 24:'#9b2e7f', 32:'#b6377a', 33:'#d04170', 34:'#e65164', 35:'#f46a5c', 43:'#fb8761', 44:'#fea571', 45:'#fec387', 54:'#fde0a1', 55:'#fcfdbf' };
+const inkOn = h => { const [r, g, b] = hex(h); return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.55 ? '#111' : '#fff'; };
 
 /* ---------- Ảnh raster dựng từ dữ liệu ---------- */
 const urls = {};
@@ -254,7 +257,7 @@ function rasterUrl(kind, year){
   const cx = cv.getContext('2d'), img = cx.createImageData(W, H);
   for (let i = 0; i < W * H; i++){
     let rgb;
-    if (kind === 'change'){ if (!Y.cls[i]) continue; rgb = hex(DELTA[deltaOf(transCode(i))].color); }
+    if (kind === 'change'){ if (!Y.cls[i]) continue; rgb = hex(TCOLOR[transCode(i)]); }
     else if (kind === 'class'){ if (!Y.cls[i]) continue; rgb = hex(CLASSES[Y.cls[i] - 1].color); }
     else { if (Y.mean[i] == null) continue; rgb = magma((Y.mean[i] - Y.lstMin) / (Y.lstMax - Y.lstMin)); }
     img.data.set([...rgb, 255], i * 4);
@@ -289,9 +292,9 @@ function update(){
   const lg = document.getElementById('legend');
   if (kind === 'change'){
     document.getElementById('lyTitle').textContent = 'Biến động phân cấp LST 2017 → 2025';
-    document.getElementById('lySub').textContent = 'Số cấp thay đổi của mỗi pixel (mã 11 – 55)';
-    lg.innerHTML = '<ul class="legend">' + [2, 1, 0, -1, -2].filter(d => deltaKm2[d]).map(d => [d, DELTA[d]]).map(([d, v]) =>
-      `<li><span class="sw" style="background:${v.color}"></span><span class="nm">${v.name}</span><span class="px">${f1(deltaKm2[d])} km²</span></li>`).join('') + '</ul>';
+    document.getElementById('lySub').textContent = 'Mã = cấp 2017 × 10 + cấp 2025; màu theo bản đồ kết quả';
+    lg.innerHTML = '<ul class="legend">' + Object.keys(N.trans).sort((a, b) => a - b).map(code =>
+      `<li><span class="sw" style="background:${TCOLOR[code]}"></span><span class="nm"><b style="font-family:var(--mono);font-weight:500">${code}</b> ${CLASSES[Math.floor(code / 10) - 1].name} → ${CLASSES[code % 10 - 1].name}</span><span class="px">${f1(N.trans[code].km2)} km²</span></li>`).join('') + '</ul>';
   } else if (kind === 'class'){
     document.getElementById('lyTitle').textContent = 'Phân cấp LST chuẩn hóa năm ' + year;
     document.getElementById('lySub').textContent = 'Chuẩn hóa min–max trong năm, 5 cấp';
@@ -345,7 +348,7 @@ map.on('mousemove click', e => {
   pxTip.innerHTML = `<div class="nm">${xaName}</div><div class="co">${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E · ô 1 km</div>` +
     `<div class="hd"><span>Năm</span><span>LST</span><span>Chuẩn</span><span></span><span>Cấp</span></div>` + rows +
     (() => { const code = transCode(i), dl = DELTA[deltaOf(code)];
-      return `<div class="row${state.kind === 'change' ? ' on' : ''}" style="margin-top:4px;grid-template-columns:44px 12px auto"><span>Mã ${code}</span><i style="background:${dl.color}"></i><span>${dl.name}</span></div>`; })();
+      return `<div class="row${state.kind === 'change' ? ' on' : ''}" style="margin-top:4px;grid-template-columns:44px 12px auto"><span>Mã ${code}</span><i style="background:${TCOLOR[code]}"></i><span>${CLASSES[Math.floor(code / 10) - 1].name} → ${CLASSES[code % 10 - 1].name} (${dl.name.toLowerCase()})</span></div>`; })();
   pxTip.style.display = 'block';
   const ev = e.originalEvent, tw = pxTip.offsetWidth, th = pxTip.offsetHeight;
   let tx = ev.clientX + 16, ty = ev.clientY + 16;
@@ -406,9 +409,8 @@ CLASSES.forEach(r => {
   CLASSES.forEach(c => {
     const code = r.k * 10 + c.k, v = TR[code], diag = r.k === c.k;
     if (!v){ mx += `<td class="zero${diag ? ' diag' : ''}">–</td>`; return; }
-    const a = 0.18 + 0.8 * Math.sqrt(v.km2 / maxTr), col = DELTA[deltaOf(code)].color;
-    const dark = a > 0.55 && deltaOf(code) !== 0;
-    mx += `<td class="${diag ? 'diag' : ''}" style="background:${rgba(col, a)};color:${dark ? '#fff' : 'var(--fg)'}" ` +
+    const col = TCOLOR[code];
+    mx += `<td class="${diag ? 'diag' : ''}" style="background:${col};color:${inkOn(col)}" ` +
       `title="Mã ${code}: ${r.name} → ${c.name} · ${f1(v.km2)} km² · ${v.px} pixel">${f1(v.km2)}<small>${v.px} px</small></td>`;
   });
   mx += '</tr>';
@@ -417,7 +419,7 @@ document.getElementById('matrix').innerHTML = mx + '</tbody>';
 
 document.getElementById('tbTrans').innerHTML = Object.entries(TR).sort((a, b) => a[0] - b[0]).map(([code, v]) => {
   const a = CLASSES[Math.floor(code / 10) - 1], b = CLASSES[code % 10 - 1], dl = DELTA[deltaOf(+code)];
-  return `<tr><td><span class="sw" style="background:${dl.color}"></span><b style="font-family:var(--mono)">${code}</b> · ${a.name} → ${b.name}</td>` +
+  return `<tr><td><span class="sw" style="background:${TCOLOR[code]}"></span><b style="font-family:var(--mono)">${code}</b> · ${a.name} → ${b.name}</td>` +
     `<td>${v.px.toLocaleString('vi-VN')}</td><td>${f1(v.km2)}</td><td>${pct(v.km2)}</td></tr>`;
 }).join('');
 

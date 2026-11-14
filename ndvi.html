@@ -28,7 +28,7 @@ td.pos{color:#22C55E} td.neg{color:var(--hl)}
 .matrix th.rh{text-align:right;padding-right:10px}
 .matrix td{border-radius:6px;font-family:var(--mono);line-height:1.3}
 .matrix td small{display:block;font-size:11px;opacity:.75}
-.matrix td.diag{box-shadow:inset 0 0 0 2px var(--fg)}
+.matrix td.diag{box-shadow:0 0 0 2px var(--accent)}
 .matrix td.zero{color:var(--muted);opacity:.5}
 .matrix .axis{font-size:12px;color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0}
 </style>
@@ -153,7 +153,7 @@ td.pos{color:#22C55E} td.neg{color:var(--hl)}
       <div class="card tcard">
         <h3>Bảng 8. Ma trận chuyển đổi cấp NDVI 2017 → 2025 (km²)</h3>
         <div class="tbl-wrap"><table class="matrix" id="matrix"></table></div>
-        <p>Hàng là cấp năm 2017, cột là cấp năm 2025. Ô có viền là các pixel <b>giữ nguyên cấp</b>; màu đỏ là giảm cấp, màu xanh lá là tăng cấp; ô càng đậm thì diện tích càng lớn.</p>
+        <p>Hàng là cấp năm 2017, cột là cấp năm 2025. Ô có viền là các pixel <b>giữ nguyên cấp</b>; ô phía trên bên phải đường chéo là tăng cấp, phía dưới bên trái là giảm cấp. Màu ô trùng màu mã trên bản đồ.</p>
       </div>
       <div class="card tcard">
         <h3>Bảng 9. Diện tích theo mã biến động (11 – 55)</h3>
@@ -193,11 +193,11 @@ const hex = h => [1,3,5].map(i => parseInt(h.slice(i, i + 2), 16));
 
 /* ---------- Cấp NDVI (nâu = ít thực vật -> xanh đậm = nhiều thực vật) ---------- */
 const CLASSES = [
-  { k:1, name:'Very Low',  range:'0,0 – 0,2', color:'#8c510a' },
-  { k:2, name:'Low',       range:'0,2 – 0,4', color:'#d8b365' },
-  { k:3, name:'Moderate',  range:'0,4 – 0,6', color:'#d9f0a3' },
-  { k:4, name:'High',      range:'0,6 – 0,8', color:'#66bd63' },
-  { k:5, name:'Very High', range:'0,8 – 1,0', color:'#006837' },
+  { k:1, name:'Very Low',  range:'0,0 – 0,2', color:'#f7fcf5' },
+  { k:2, name:'Low',       range:'0,2 – 0,4', color:'#c9eac2' },
+  { k:3, name:'Moderate',  range:'0,4 – 0,6', color:'#7bc77c' },
+  { k:4, name:'High',      range:'0,6 – 0,8', color:'#2a924b' },
+  { k:5, name:'Very High', range:'0,8 – 1,0', color:'#00441b' },
 ];
 /* ---------- Biến động: số cấp thay đổi ---------- */
 const DELTA = {
@@ -208,6 +208,9 @@ const DELTA = {
   '2':  { name:'Tăng 2 cấp', color:'#15803D' },
 };
 const ORDER = [-2, -1, 0, 1, 2];
+// Màu theo bản đồ kết quả (QGIS Map_NDVI_classification, Map_NDVI_Change)
+const TCOLOR = { 11:'#f7fcf5', 12:'#eef8ea', 13:'#e4f5df', 21:'#d5efcf', 22:'#c5e8be', 23:'#b2e0ab', 32:'#9ed798', 33:'#86cd85', 34:'#6fc173', 35:'#55b567', 42:'#3da75a', 43:'#2e964e', 44:'#1d8641', 45:'#0a7533', 54:'#005f26', 55:'#00441b' };
+const inkOn = h => { const [r, g, b] = hex(h); return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.55 ? '#111' : '#fff'; };
 const c17 = N.years['2017'].cls, c25 = N.years['2025'].cls;
 const codeAt = i => c17[i] * 10 + c25[i];
 const deltaOf = code => Math.max(-2, Math.min(2, (code % 10) - Math.floor(code / 10)));
@@ -217,7 +220,7 @@ for (const [code, v] of Object.entries(N.trans)){ const d = deltaOf(+code); dKm2
 const LAYERS = {
   ndvi_2017: { title:'NDVI phân cấp năm 2017', sub:'Chuẩn hóa min–max trong năm, 5 cấp' },
   ndvi_2025: { title:'NDVI phân cấp năm 2025', sub:'Chuẩn hóa min–max trong năm, 5 cấp' },
-  ndvi_change: { title:'Biến động cấp NDVI 2017 → 2025', sub:'Số cấp thay đổi của mỗi pixel (mã 11 – 55)' },
+  ndvi_change: { title:'Biến động cấp NDVI 2017 → 2025', sub:'Mã = cấp 2017 × 10 + cấp 2025; màu theo bản đồ kết quả' },
 };
 
 /* ---------- Ảnh raster dựng từ dữ liệu ---------- */
@@ -228,7 +231,7 @@ function rasterUrl(key){
   const cx = cv.getContext('2d'), img = cx.createImageData(W, H);
   for (let i = 0; i < W * H; i++){
     if (!c17[i]) continue;
-    const col = key === 'ndvi_change' ? DELTA[deltaOf(codeAt(i))].color
+    const col = key === 'ndvi_change' ? TCOLOR[codeAt(i)]
       : CLASSES[(key === 'ndvi_2017' ? c17[i] : c25[i]) - 1].color;
     img.data.set([...hex(col), 255], i * 4);
   }
@@ -258,8 +261,8 @@ function setLayer(key){
   document.getElementById('lySub').textContent = LAYERS[key].sub;
   const lg = document.getElementById('legend');
   if (key === 'ndvi_change'){
-    lg.innerHTML = ORDER.filter(d => dKm2[d]).map(d =>
-      `<li><span class="sw" style="background:${DELTA[d].color}"></span><span class="nm">${DELTA[d].name}</span><span class="px">${f1(dKm2[d])} km²</span></li>`).join('');
+    lg.innerHTML = Object.keys(N.trans).sort((a, b) => a - b).map(code =>
+      `<li><span class="sw" style="background:${TCOLOR[code]}"></span><span class="nm"><b style="font-family:var(--mono);font-weight:500">${code}</b> ${CLASSES[Math.floor(code / 10) - 1].name} → ${CLASSES[code % 10 - 1].name}</span><span class="px">${f1(N.trans[code].km2)} km²</span></li>`).join('');
   } else {
     const Y = N.years[key.slice(-4)];
     lg.innerHTML = CLASSES.map(c =>
@@ -303,7 +306,7 @@ map.on('mousemove click', e => {
     `<div class="co">${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E · ô 1 km</div>` +
     row_('2017', a.color, `${a.name} (${a.range})`, cur === 'ndvi_2017') +
     row_('2025', b.color, `${b.name} (${b.range})`, cur === 'ndvi_2025') +
-    row_('Biến động', d.color, `Mã ${code} · ${d.name}`, cur === 'ndvi_change');
+    row_('Biến động', TCOLOR[code], `Mã ${code} · ${d.name.toLowerCase()}`, cur === 'ndvi_change');
   pxTip.style.display = 'block';
   const ev = e.originalEvent, tw = pxTip.offsetWidth, th = pxTip.offsetHeight;
   let tx = ev.clientX + 16, ty = ev.clientY + 16;
@@ -369,9 +372,8 @@ CLASSES.forEach(r => {
   CLASSES.forEach(c => {
     const code = r.k * 10 + c.k, v = TR[code], diag = r.k === c.k;
     if (!v){ mx += `<td class="zero${diag ? ' diag' : ''}">–</td>`; return; }
-    const a = 0.18 + 0.8 * Math.sqrt(v.km2 / maxTr), d = deltaOf(code);
-    const dark = a > 0.55 && Math.abs(d) === 2;
-    mx += `<td class="${diag ? 'diag' : ''}" style="background:${rgba(DELTA[d].color, a)};color:${dark ? '#fff' : 'var(--fg)'}" ` +
+    const col = TCOLOR[code];
+    mx += `<td class="${diag ? 'diag' : ''}" style="background:${col};color:${inkOn(col)}" ` +
       `title="Mã ${code}: ${r.name} → ${c.name} · ${f1(v.km2)} km² · ${v.px} pixel">${f1(v.km2)}<small>${v.px} px</small></td>`;
   });
   mx += '</tr>';
@@ -379,7 +381,7 @@ CLASSES.forEach(r => {
 document.getElementById('matrix').innerHTML = mx + '</tbody>';
 document.getElementById('tbTrans').innerHTML = Object.entries(TR).sort((a, b) => a[0] - b[0]).map(([code, v]) => {
   const a = CLASSES[Math.floor(code / 10) - 1], b = CLASSES[code % 10 - 1], d = DELTA[deltaOf(+code)];
-  return `<tr><td><span class="sw" style="background:${d.color}"></span><b style="font-family:var(--mono)">${code}</b> · ${a.name} → ${b.name}</td>` +
+  return `<tr><td><span class="sw" style="background:${TCOLOR[code]}"></span><b style="font-family:var(--mono)">${code}</b> · ${a.name} → ${b.name}</td>` +
     `<td>${v.px.toLocaleString('vi-VN')}</td><td>${f1(v.km2)}</td><td>${pct(v.km2)}</td></tr>`;
 }).join('');
 
