@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Urheatixel · Đất xây dựng Hà Nội</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="assets/base.css">
+<script src="assets/theme.js"></script>
+<link rel="stylesheet" href="assets/sections.css">
+<style>
+:root{
+  --c-non:#000000; --c-dec:#7B1E7A; --c-exp:#F4645F; --c-built:#FFFAC0; --hl:#F4645F;
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">
+    <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true">
+      <rect width="36" height="36" rx="9" fill="#17223a"/>
+      <rect x="7" y="7" width="7" height="7" fill="#3B82F6"/><rect x="14.5" y="7" width="7" height="7" fill="#FBBF24"/><rect x="22" y="7" width="7" height="7" fill="#F97316"/>
+      <rect x="7" y="14.5" width="7" height="7" fill="#FBBF24"/><rect x="14.5" y="14.5" width="7" height="7" fill="#EF4444"/><rect x="22" y="14.5" width="7" height="7" fill="#F97316"/>
+      <rect x="7" y="22" width="7" height="7" fill="#60A5FA"/><rect x="14.5" y="22" width="7" height="7" fill="#F97316"/><rect x="22" y="22" width="7" height="7" fill="#FBBF24"/>
+    </svg>
+    <div>
+      <h1>Urheatixel</h1>
+      <p>Đất xây dựng Hà Nội · Esri | Sentinel-2 Land Cover · 2017 &amp; 2025</p>
+    </div>
+  </a>
+  <div class="top-right">
+    <nav class="parts" aria-label="Các phần">
+      <a href="index.html"><b>01</b><span class="lb">Nhiệt độ bề mặt</span><span class="sh">LST</span></a>
+      <a href="normalized.html"><b>02</b><span class="lb">LST chuẩn hóa</span><span class="sh">Chuẩn hóa</span></a>
+      <a href="builtup.html" aria-current="page"><b>03</b><span class="lb">Đất xây dựng</span><span class="sh">Xây dựng</span></a>
+    </nav>
+    <button class="icon-btn" id="themeBtn" aria-label="Đổi giao diện sáng/tối">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="intro">
+    <div class="eyebrow">PHẦN 03 · NGUYÊN NHÂN</div>
+    <h2>Đất xây dựng mở rộng — nền tảng của vùng nhiệt độ cao lan rộng</h2>
+    <p>Lớp <b>Built Area</b> từ <b>Esri | Sentinel-2 Land Cover Explorer</b> (độ phân giải 10 m) được dùng để xác định đất xây dựng của Hà Nội năm 2017 và 2025, và phần diện tích đã thay đổi giữa hai thời điểm. Bề mặt bê tông, mái nhà và đường giao thông hấp thụ và giữ nhiệt nhiều hơn đất trống, mặt nước và thảm thực vật. Vì vậy, mở rộng đất xây dựng là một nguyên nhân trực tiếp làm vùng nhiệt độ bề mặt cao lan rộng.</p>
+  </section>
+
+  <!-- ============ 1. BẢN ĐỒ ============ -->
+  <section aria-labelledby="secMap">
+    <h2 class="sec-title" id="secMap">Bản đồ đất xây dựng <span>raster 20 m · kéo / cuộn để phóng to</span></h2>
+    <div class="card map-shell">
+      <div class="map-main">
+        <div class="map-bar">
+          <div class="seg" role="group" aria-label="Chọn lớp">
+            <button data-layer="built_2017" aria-pressed="true">Năm 2017</button>
+            <button data-layer="built_2025" aria-pressed="false">Năm 2025</button>
+            <button data-layer="change_2017_2025" aria-pressed="false">Biến động 2017–2025</button>
+          </div>
+          <div class="seg" role="group" aria-label="Kiểu hiển thị">
+            <button data-view="raster" aria-pressed="true">Lớp raster</button>
+            <button data-view="final" aria-pressed="false">Bản đồ kết quả</button>
+          </div>
+        </div>
+        <div class="view" id="view" data-view="raster">
+          <div id="map" role="region" aria-label="Bản đồ raster đất xây dựng"></div>
+          <div class="final"><a id="finalLink" target="_blank" rel="noopener"><img id="finalImg" alt=""></a></div>
+        </div>
+      </div>
+      <div class="map-side">
+        <div>
+          <p class="title" id="lyTitle">–</p>
+          <p class="sub" id="lySub">–</p>
+        </div>
+        <div>
+          <h3>Chú giải</h3>
+          <ul class="legend" id="legend"></ul>
+        </div>
+        <div id="boundaryBox">
+          <h3>Ranh giới</h3>
+          <label class="layer"><input type="checkbox" id="lyTinh" checked> Ranh giới tỉnh</label>
+          <label class="layer"><input type="checkbox" id="lyXa"> Ranh giới xã (126 đơn vị)</label>
+        </div>
+        <div style="display:grid;gap:8px">
+          <a class="dl" id="dlBtn" download>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+            Tải bản đồ <small id="dlSize"></small>
+          </a>
+          <p class="note">Bản đồ hoàn chỉnh (PNG, độ phân giải đầy đủ) từ thư mục 4_Results/LULC.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. THỐNG KÊ ============ -->
+  <section aria-labelledby="secStat">
+    <h2 class="sec-title" id="secStat">Kết quả thống kê <span>giai đoạn 2017 – 2025</span></h2>
+
+    <div class="kpis">
+      <div class="card kpi"><span class="lbl">Đất xây dựng 2017</span><span class="val" id="k17">–</span><span class="sub"><b id="k17p">–</b> diện tích khu vực</span></div>
+      <div class="card kpi"><span class="lbl">Đất xây dựng 2025</span><span class="val" id="k25">–</span><span class="sub"><b id="k25p">–</b> diện tích khu vực</span></div>
+      <div class="card kpi hl"><span class="lbl">Tăng ròng sau 8 năm</span><span class="val" id="kNet">–</span><span class="sub">tăng <b id="kNetP">–</b> so với 2017</span></div>
+      <div class="card kpi"><span class="lbl">Tốc độ tăng trung bình</span><span class="val" id="kRate">–</span><span class="sub">mỗi năm</span></div>
+    </div>
+
+    <div class="tables">
+      <div class="card tcard">
+        <h3>Bảng 1. Diện tích đất xây dựng giai đoạn 2017 – 2025</h3>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Năm</th><th>Pixel (số đếm)</th><th>Diện tích (km²)</th><th>Tỷ lệ</th></tr></thead>
+          <tbody id="tb1"></tbody>
+        </table></div>
+        <p id="t1note"></p>
+      </div>
+
+      <div class="card tcard">
+        <h3>Bảng 2. Biến động diện tích đất xây dựng giai đoạn 2017 – 2025</h3>
+        <div class="comp" id="comp" role="img"></div>
+        <div class="comp-legend" id="compLegend"></div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Sự biến động</th><th>Pixel (số đếm)</th><th>Diện tích (km²)</th><th>Tỷ lệ</th></tr></thead>
+          <tbody id="tb2"></tbody>
+        </table></div>
+        <p id="t2note"></p>
+      </div>
+    </div>
+
+    <div class="card link-card">
+      <p>Đất xây dựng tập trung dày đặc ở khu vực trung tâm thành phố và dọc hai bờ sông Hồng. Phần mở rộng chủ yếu xuất hiện ở vùng ven: bao quanh và nối liền các mảng đất xây dựng sẵn có, cho thấy đô thị hóa lan tỏa từ lõi đô thị ra ngoại vi. Các khu vực rìa phía tây và phía bắc vẫn chủ yếu là đất không xây dựng. Hãy đối chiếu các vùng này với bản đồ phân cấp LST chuẩn hóa ở Phần 02.</p>
+      <a href="normalized.html">
+        Xem LST chuẩn hóa
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+      </a>
+    </div>
+  </section>
+</main>
+<footer>Urheatixel · NASA Space Apps Challenge Hanoi 2026 · Dữ liệu: Esri | Sentinel-2 Land Cover (10 m)</footer>
+<div class="comp-tip" id="compTip"></div>
+<div class="px-tip" id="pxTip"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="data/builtup/builtup_meta.js"></script>
+<script>
+(() => {
+const B = window.BUILTUP;
+const PX_KM2 = B.pixelArea / 1e6;          // 10 m x 10 m = 0.0001 km²
+const C = { non:'#000000', dec:'#7B1E7A', exp:'#F4645F', built:'#FFFAC0' };
+const nf = new Intl.NumberFormat('vi-VN');
+const km2 = n => (n * PX_KM2).toLocaleString('vi-VN', {minimumFractionDigits:2, maximumFractionDigits:2});
+const pct = (a, b) => (a / b * 100).toLocaleString('vi-VN', {minimumFractionDigits:2, maximumFractionDigits:2}) + '%';
+
+/* ================= Thống kê (tính từ số đếm pixel của raster) ================= */
+const c17 = B.counts.built_2017, c25 = B.counts.built_2025, ch = B.counts.change_2017_2025;
+const total = Object.values(c17).reduce((a, b) => a + b, 0);
+const b17 = c17['7'], b25 = c25['7'], net = b25 - b17;
+document.getElementById('k17').innerHTML = km2(b17) + '<small>km²</small>';
+document.getElementById('k25').innerHTML = km2(b25) + '<small>km²</small>';
+document.getElementById('k17p').textContent = pct(b17, total);
+document.getElementById('k25p').textContent = pct(b25, total);
+document.getElementById('kNet').innerHTML = '+' + km2(net) + '<small>km²</small>';
+document.getElementById('kNetP').textContent = pct(net, b17);
+document.getElementById('kRate').innerHTML = '≈ ' + km2(net / 8) + '<small>km²</small>';
+
+document.getElementById('tb1').innerHTML = [['Năm 2017', b17], ['Năm 2025', b25]].map(([n, v]) =>
+  `<tr><td>${n}</td><td>${nf.format(v)}</td><td>${km2(v)}</td><td>${pct(v, total)}</td></tr>`).join('');
+document.getElementById('t1note').innerHTML =
+  `Diện tích đất xây dựng tăng từ <b>${km2(b17)} km²</b> lên <b>${km2(b25)} km²</b>, tức tăng ròng <b>${km2(net)} km²</b> (+${pct(net, b17)}). Tỷ lệ tính trên tổng diện tích khu vực nghiên cứu là ${km2(total)} km².`;
+
+const ROWS = [
+  { k:'0', name:'Không phải đất xây dựng', color:C.non },
+  { k:'1', name:'Đất xây dựng thu hẹp',    color:C.dec },
+  { k:'2', name:'Đất xây dựng mở rộng',    color:C.exp },
+  { k:'3', name:'Đất xây dựng ổn định',    color:C.built },
+];
+document.getElementById('tb2').innerHTML = ROWS.map(r =>
+  `<tr><td><span class="sw" style="background:${r.color}"></span>${r.name}</td><td>${nf.format(ch[r.k])}</td><td>${km2(ch[r.k])}</td><td>${pct(ch[r.k], total)}</td></tr>`).join('');
+document.getElementById('t2note').innerHTML =
+  `Phần ổn định chiếm <b>${pct(ch['3'], b17)}</b> diện tích đất xây dựng năm 2017. Diện tích mở rộng (<b>${km2(ch['2'])} km²</b>) lớn gấp khoảng <b>${(ch['2'] / ch['1']).toLocaleString('vi-VN', {maximumFractionDigits:1})} lần</b> diện tích thu hẹp (<b>${km2(ch['1'])} km²</b>).`;
+
+// Thanh tỷ lệ (100% khu vực nghiên cứu)
+const comp = document.getElementById('comp'), tip = document.getElementById('compTip');
+comp.setAttribute('aria-label', 'Tỷ lệ các loại biến động: ' + ROWS.map(r => r.name + ' ' + pct(ch[r.k], total)).join(', '));
+ROWS.forEach(r => {
+  const d = document.createElement('div');
+  d.style.flex = ch[r.k]; d.style.background = r.color;
+  d.addEventListener('pointermove', e => {
+    tip.innerHTML = `${r.name}<br><b>${km2(ch[r.k])} km²</b> · ${pct(ch[r.k], total)}`;
+    tip.style.display = 'block';
+    const w = tip.offsetWidth;
+    tip.style.left = Math.min(e.clientX + 12, innerWidth - w - 8) + 'px'; tip.style.top = (e.clientY + 14) + 'px';
+  });
+  d.addEventListener('pointerleave', () => tip.style.display = 'none');
+  comp.appendChild(d);
+});
+document.getElementById('compLegend').innerHTML = ROWS.map(r =>
+  `<span><i style="background:${r.color}"></i>${r.name} · ${pct(ch[r.k], total)}</span>`).join('');
+
+/* ================= Bản đồ raster (Leaflet, toạ độ pixel) ================= */
+const LAYERS = {
+  built_2017: { title:'Đất xây dựng năm 2017', sub:'Phân bố không gian đất xây dựng', legend:[[C.non,'Không phải đất xây dựng','0'],[C.built,'Đất xây dựng','7']] },
+  built_2025: { title:'Đất xây dựng năm 2025', sub:'Phân bố không gian đất xây dựng', legend:[[C.non,'Không phải đất xây dựng','0'],[C.built,'Đất xây dựng','7']] },
+  change_2017_2025: { title:'Biến động đất xây dựng 2017–2025', sub:'So sánh từng pixel giữa hai năm', legend:ROWS.map(r => [r.color, r.name, r.k]) },
+};
+const { w: W, h: H } = B.size;
+const map = L.map('map', { crs: L.CRS.Simple, minZoom: -4, maxZoom: 3, zoomSnap: 0.25, zoomDelta: 0.5, attributionControl: false, preferCanvas: true });
+const bounds = [[-H, 0], [0, W]];
+const img = L.imageOverlay('data/builtup/built_2017.png', bounds).addTo(map);
+map.fitBounds(bounds);
+map.setMaxBounds(L.latLngBounds(bounds).pad(0.3));
+const P = ([r, c]) => [-r, c];
+const tinh = L.polyline(B.tinh.map(r => r.map(P)), { color:'#E11D48', weight:2.5, interactive:false });
+tinh.addTo(map);
+const xa = L.layerGroup(B.xa.map(x => L.polyline(x.rings.map(r => r.map(P)), { color:'#60A5FA', weight:1, interactive:false })));
+document.getElementById('lyTinh').onchange = e => e.target.checked ? tinh.addTo(map) : tinh.remove();
+document.getElementById('lyXa').onchange = e => e.target.checked ? xa.addTo(map) : xa.remove();
+
+const fmtMB = b => (b / 1048576).toLocaleString('vi-VN', {maximumFractionDigits:1}) + ' MB';
+let cur = 'built_2017';
+function setLayer(key){
+  cur = key;
+  const L_ = LAYERS[key], m = B.maps[key], counts = B.counts[key];
+  img.setUrl('data/builtup/' + key + '.png');
+  document.querySelectorAll('[data-layer]').forEach(b => b.setAttribute('aria-pressed', b.dataset.layer === key));
+  document.getElementById('lyTitle').textContent = L_.title;
+  document.getElementById('lySub').textContent = L_.sub;
+  document.getElementById('legend').innerHTML = L_.legend.map(([c, n, k]) =>
+    `<li><span class="sw" style="background:${c}"></span><span class="nm">${n}</span><span class="px">${km2(counts[k])} km²</span></li>`).join('');
+  const dl = document.getElementById('dlBtn');
+  dl.href = m.file; dl.setAttribute('download', m.file.split('/').pop());
+  dl.setAttribute('aria-label', 'Tải bản đồ ' + L_.title + ' (PNG)');
+  document.getElementById('dlSize').textContent = 'PNG · ' + fmtMB(m.bytes);
+  const fi = document.getElementById('finalImg');
+  fi.src = m.preview; fi.alt = 'Bản đồ kết quả: ' + L_.title;
+  document.getElementById('finalLink').href = m.file;
+}
+function setView(v){
+  document.getElementById('view').dataset.view = v;
+  document.querySelectorAll('[data-view]').forEach(b => { if (b.tagName === 'BUTTON') b.setAttribute('aria-pressed', b.dataset.view === v); });
+  document.getElementById('boundaryBox').style.display = v === 'raster' ? '' : 'none';
+  if (v === 'raster') map.invalidateSize();
+}
+/* ================= Giá trị theo pixel khi rê chuột ================= */
+// Mã biến động đủ để suy ra cả 2 năm: 0 = không XD cả hai, 1 = chỉ 2017, 2 = chỉ 2025, 3 = cả hai
+const RGB2CODE = { '0,0,0':0, '123,30,122':1, '244,100,95':2, '255,250,192':3 };
+let codes = null;
+(() => {
+  const im = new Image();
+  im.onload = () => {
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    const cx = cv.getContext('2d', { willReadFrequently:true }); cx.drawImage(im, 0, 0);
+    const d = cx.getImageData(0, 0, W, H).data, out = new Uint8Array(W * H).fill(255);
+    for (let i = 0, o = 0; i < out.length; i++, o += 4)
+      if (d[o + 3]) { const c = RGB2CODE[d[o] + ',' + d[o + 1] + ',' + d[o + 2]]; if (c !== undefined) out[i] = c; }
+    codes = out; cv.width = cv.height = 0;
+  };
+  im.src = 'data/builtup/change_2017_2025.png';
+})();
+
+// UTM (WGS84) -> kinh/vĩ độ
+const ZONE = B.epsg - 32600;
+function utmToLatLon(x, y){
+  const a = 6378137, f = 1/298.257223563, k0 = 0.9996, e2 = f*(2-f), ep2 = e2/(1-e2);
+  const e1 = (1-Math.sqrt(1-e2))/(1+Math.sqrt(1-e2));
+  const M = y / k0, mu = M / (a*(1 - e2/4 - 3*e2*e2/64 - 5*e2**3/256));
+  const p = mu + (3*e1/2 - 27*e1**3/32)*Math.sin(2*mu) + (21*e1*e1/16 - 55*e1**4/32)*Math.sin(4*mu)
+          + (151*e1**3/96)*Math.sin(6*mu) + (1097*e1**4/512)*Math.sin(8*mu);
+  const s = Math.sin(p), c = Math.cos(p), t = Math.tan(p);
+  const N = a/Math.sqrt(1-e2*s*s), R = a*(1-e2)/(1-e2*s*s)**1.5, Cc = ep2*c*c, T = t*t, D = (x-500000)/(N*k0);
+  const lat = p - (N*t/R)*(D*D/2 - (5+3*T+10*Cc-4*Cc*Cc-9*ep2)*D**4/24 + (61+90*T+298*Cc+45*T*T-252*ep2-3*Cc*Cc)*D**6/720);
+  const lon = (D - (1+2*T+Cc)*D**3/6 + (5-2*Cc+28*T-3*Cc*Cc+8*ep2+24*T*T)*D**5/120)/c;
+  return [lat*180/Math.PI, (ZONE*6-183) + lon*180/Math.PI];
+}
+
+// Tìm xã chứa điểm (toạ độ pixel)
+const XA_BOX = B.xa.map(x => { let r0=1e9,r1=-1e9,c0=1e9,c1=-1e9;
+  x.rings.forEach(rg => rg.forEach(([r,c]) => { r0=Math.min(r0,r); r1=Math.max(r1,r); c0=Math.min(c0,c); c1=Math.max(c1,c); }));
+  return [r0,r1,c0,c1]; });
+function findXa(r, c){
+  for (let k = 0; k < B.xa.length; k++){
+    const b = XA_BOX[k]; if (r<b[0]||r>b[1]||c<b[2]||c>b[3]) continue;
+    let ins = false;
+    for (const rg of B.xa[k].rings)
+      for (let i=0, j=rg.length-1; i<rg.length; j=i++){
+        const [ri,ci] = rg[i], [rj,cj] = rg[j];
+        if ((ri>r) !== (rj>r) && c < (cj-ci)*(r-ri)/(rj-ri) + ci) ins = !ins;
+      }
+    if (ins) return B.xa[k].ten;
+  }
+  return null;
+}
+
+const pxTip = document.getElementById('pxTip');
+const hl = L.rectangle([[0,0],[0,0]], { color:'#ffffff', weight:2, fill:false, interactive:false });
+const CH_NAME = ['Không phải đất xây dựng', 'Đất xây dựng thu hẹp', 'Đất xây dựng mở rộng', 'Đất xây dựng ổn định'];
+const CH_COLOR = [C.non, C.dec, C.exp, C.built];
+function hidePx(){ pxTip.style.display = 'none'; hl.remove(); }
+function showPx(e){
+  const row = Math.floor(-e.latlng.lat), col = Math.floor(e.latlng.lng);
+  if (row < 0 || col < 0 || row >= H || col >= W) return hidePx();
+  const ev = e.originalEvent;
+  if (!codes){
+    pxTip.innerHTML = 'Đang tải dữ liệu pixel…';
+  } else {
+    const code = codes[row * W + col];
+    if (code === 255) return hidePx();
+    const T = B.transform, x = T[0]*(col+.5) + T[1]*(row+.5) + T[2], y = T[3]*(col+.5) + T[4]*(row+.5) + T[5];
+    const [lat, lon] = utmToLatLon(x, y);
+    const in17 = code === 1 || code === 3, in25 = code >= 2;
+    const yr = v => [v ? C.built : C.non, v ? 'Đất xây dựng' : 'Không phải đất xây dựng'];
+    const rows = [['2017', ...yr(in17), cur === 'built_2017'], ['2025', ...yr(in25), cur === 'built_2025'],
+                  ['Biến động', CH_COLOR[code], CH_NAME[code], cur === 'change_2017_2025']];
+    pxTip.innerHTML = `<div class="nm">${findXa(row + .5, col + .5) || 'Hà Nội'}</div>` +
+      `<div class="co">${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E · ô 20 m</div>` +
+      rows.map(([k, c, n, on]) => `<div class="row${on ? ' on' : ''}"><span>${k}</span><i style="background:${c}"></i><span>${n}</span></div>`).join('');
+  }
+  pxTip.style.display = 'block';
+  const tw = pxTip.offsetWidth, th = pxTip.offsetHeight;
+  let tx = ev.clientX + 16, ty = ev.clientY + 16;
+  if (tx + tw > innerWidth - 8) tx = ev.clientX - tw - 16;
+  if (ty + th > innerHeight - 8) ty = ev.clientY - th - 16;
+  pxTip.style.left = tx + 'px'; pxTip.style.top = ty + 'px';
+  hl.setBounds([[-row - 1, col], [-row, col + 1]]); if (!map.hasLayer(hl)) hl.addTo(map);
+}
+map.on('mousemove click', showPx);
+map.on('mouseout dragstart zoomstart', hidePx);
+
+document.querySelectorAll('button[data-layer]').forEach(b => b.onclick = () => setLayer(b.dataset.layer));
+document.querySelectorAll('button[data-view]').forEach(b => b.onclick = () => setView(b.dataset.view));
+setLayer('built_2017');
+})();
+</script>
+</body>
+</html>
