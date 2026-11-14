@@ -30,6 +30,7 @@ và ghi lại các file trong `data/` và `assets/maps/`:
 python build_data.py
 python build_normalized.py
 python build_builtup.py
+python build_builtup_tiles.py
 python build_ndvi.py
 python build_hotspot.py
 ```

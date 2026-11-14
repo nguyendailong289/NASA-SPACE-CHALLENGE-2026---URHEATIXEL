@@ -12,6 +12,7 @@
 <script src="assets/theme.js"></script>
 <link rel="stylesheet" href="assets/sections.css">
 <style>
+#map .leaflet-tile{image-rendering:pixelated}
 :root{
   --c-non:#000000; --c-dec:#7B1E7A; --c-exp:#F4645F; --c-built:#FFFAC0; --hl:#F4645F;
 }
@@ -49,7 +50,7 @@
 
   <!-- ============ 1. BẢN ĐỒ ============ -->
   <section aria-labelledby="secMap">
-    <h2 class="sec-title" id="secMap">Bản đồ đất xây dựng <span>dữ liệu gốc 10 m · hiển thị 20 m · kéo / cuộn để phóng to</span></h2>
+    <h2 class="sec-title" id="secMap">Bản đồ đất xây dựng <span>raster 10 m · phóng to để xem từng pixel 10 m</span></h2>
     <div class="card map-shell">
       <div class="map-main">
         <div class="map-bar">
@@ -140,6 +141,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="data/builtup/builtup_meta.js"></script>
+<script src="data/builtup/tiles_meta.js"></script>
 <script>
 (() => {
 const B = window.BUILTUP;
@@ -202,9 +204,20 @@ const LAYERS = {
   change_2017_2025: { title:'Biến động đất xây dựng 2017–2025', sub:'So sánh từng pixel giữa hai năm', legend:ROWS.map(r => [r.color, r.name, r.k]) },
 };
 const { w: W, h: H } = B.size;
-const map = L.map('map', { crs: L.CRS.Simple, minZoom: -4, maxZoom: 3, zoomSnap: 0.25, zoomDelta: 0.5, attributionControl: false, preferCanvas: true });
+const map = L.map('map', { crs: L.CRS.Simple, minZoom: -4, maxZoom: 4, zoomSnap: 0.25, zoomDelta: 0.5, attributionControl: false, preferCanvas: true });
 const bounds = [[-H, 0], [0, W]];
-const img = L.imageOverlay('data/builtup/built_2017.png', bounds).addTo(map);
+// Ảnh 20 m khi xem toàn cảnh; ô 10 m (tiles) khi phóng to. Ranh giới vẽ phía trên cả hai.
+map.createPane('p20').style.zIndex = 380;
+map.createPane('p10').style.zIndex = 390;
+const img = L.imageOverlay('data/builtup/built_2017.png', bounds, { pane:'p20' }).addTo(map);
+const TL = window.BUILTUP_TILES, TSET = new Set(TL.tiles);
+const SY = TL.h / H, SXT = TL.w / W;           // số pixel 10 m trên mỗi đơn vị 20 m (≈ 2)
+const BLANK = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+const Z10 = 0.5;                                  // mức zoom bắt đầu hiện ô 10 m
+const Tile10 = L.TileLayer.extend({ getTileUrl(c){ const k = c.x + '_' + c.y;
+  return TSET.has(k) ? `data/builtup/tiles/${this.options.layerKey}/${k}.png` : BLANK; } });
+const tiles10 = new Tile10('', { pane:'p10', tileSize:256, minNativeZoom:1, maxNativeZoom:1, minZoom:Z10, maxZoom:4,
+  bounds: L.latLngBounds(bounds), noWrap:true, layerKey:'built_2017', keepBuffer:1 }).addTo(map);
 map.fitBounds(bounds);
 map.setMaxBounds(L.latLngBounds(bounds).pad(0.3));
 const P = ([r, c]) => [-r, c];
@@ -220,6 +233,7 @@ function setLayer(key){
   cur = key;
   const L_ = LAYERS[key], m = B.maps[key], counts = B.counts[key];
   img.setUrl('data/builtup/' + key + '.png');
+  tiles10.options.layerKey = key; tiles10.redraw();
   document.querySelectorAll('[data-layer]').forEach(b => b.setAttribute('aria-pressed', b.dataset.layer === key));
   document.getElementById('lyTitle').textContent = L_.title;
   document.getElementById('lySub').textContent = L_.sub;
@@ -294,23 +308,50 @@ const hl = L.rectangle([[0,0],[0,0]], { color:'#ffffff', weight:2, fill:false, i
 const CH_NAME = ['Không phải đất xây dựng', 'Đất xây dựng thu hẹp', 'Đất xây dựng mở rộng', 'Đất xây dựng ổn định'];
 const CH_COLOR = [C.non, C.dec, C.exp, C.built];
 function hidePx(){ pxTip.style.display = 'none'; hl.remove(); }
+// Bộ nhớ đệm mã biến động của từng ô 10 m (256 x 256)
+const tileCodes = new Map();
+function tileCode(c10, r10){
+  const k = (c10 >> 8) + '_' + (r10 >> 8);
+  if (!TSET.has(k)) return 255;
+  const t = tileCodes.get(k);
+  if (t === undefined){
+    tileCodes.set(k, null);
+    const im = new Image();
+    im.onload = () => { const cv = document.createElement('canvas'); cv.width = cv.height = 256;
+      const cx = cv.getContext('2d', { willReadFrequently:true }); cx.drawImage(im, 0, 0);
+      const d = cx.getImageData(0, 0, 256, 256).data, out = new Uint8Array(65536).fill(255);
+      for (let i = 0, o = 0; i < 65536; i++, o += 4)
+        if (d[o + 3]) { const v = RGB2CODE[d[o] + ',' + d[o + 1] + ',' + d[o + 2]]; if (v !== undefined) out[i] = v; }
+      tileCodes.set(k, out); };
+    im.src = `data/builtup/tiles/change_2017_2025/${k}.png`;
+    return null;
+  }
+  return t === null ? null : t[(r10 & 255) * 256 + (c10 & 255)];
+}
 function showPx(e){
-  const row = Math.floor(-e.latlng.lat), col = Math.floor(e.latlng.lng);
-  if (row < 0 || col < 0 || row >= H || col >= W) return hidePx();
   const ev = e.originalEvent;
-  if (!codes){
+  const fine = map.getZoom() >= Z10;
+  // Toạ độ pixel: 10 m khi phóng to, 20 m khi xem toàn cảnh
+  const row = Math.floor(-e.latlng.lat), col = Math.floor(e.latlng.lng);
+  const r10 = Math.floor(-e.latlng.lat * SY), c10 = Math.floor(e.latlng.lng * SXT);
+  if (row < 0 || col < 0 || row >= H || col >= W) return hidePx();
+  let code = null, res = 20;
+  if (fine){ code = tileCode(c10, r10); res = 10; }
+  if (code === null && codes){ code = codes[row * W + col]; res = 20; }
+  if (code === null){
     pxTip.innerHTML = 'Đang tải dữ liệu pixel…';
   } else {
-    const code = codes[row * W + col];
     if (code === 255) return hidePx();
-    const T = B.transform, x = T[0]*(col+.5) + T[1]*(row+.5) + T[2], y = T[3]*(col+.5) + T[4]*(row+.5) + T[5];
+    const T = B.transform;
+    const x = res === 10 ? T[2] + 10 * (c10 + .5) : T[0]*(col+.5) + T[1]*(row+.5) + T[2];
+    const y = res === 10 ? T[5] - 10 * (r10 + .5) : T[3]*(col+.5) + T[4]*(row+.5) + T[5];
     const [lat, lon] = utmToLatLon(x, y);
     const in17 = code === 1 || code === 3, in25 = code >= 2;
     const yr = v => [v ? C.built : C.non, v ? 'Đất xây dựng' : 'Không phải đất xây dựng'];
     const rows = [['2017', ...yr(in17), cur === 'built_2017'], ['2025', ...yr(in25), cur === 'built_2025'],
                   ['Biến động', CH_COLOR[code], CH_NAME[code], cur === 'change_2017_2025']];
-    pxTip.innerHTML = `<div class="nm">${findXa(row + .5, col + .5) || 'Hà Nội'}</div>` +
-      `<div class="co">${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E · ô 20 m</div>` +
+    pxTip.innerHTML = `<div class="nm">${findXa(-e.latlng.lat, e.latlng.lng) || 'Hà Nội'}</div>` +
+      `<div class="co">${lat.toFixed(5)}°N, ${lon.toFixed(5)}°E · ô ${res} m</div>` +
       rows.map(([k, c, n, on]) => `<div class="row${on ? ' on' : ''}"><span>${k}</span><i style="background:${c}"></i><span>${n}</span></div>`).join('');
   }
   pxTip.style.display = 'block';
@@ -319,7 +360,9 @@ function showPx(e){
   if (tx + tw > innerWidth - 8) tx = ev.clientX - tw - 16;
   if (ty + th > innerHeight - 8) ty = ev.clientY - th - 16;
   pxTip.style.left = tx + 'px'; pxTip.style.top = ty + 'px';
-  hl.setBounds([[-row - 1, col], [-row, col + 1]]); if (!map.hasLayer(hl)) hl.addTo(map);
+  if (fine) hl.setBounds([[-(r10 + 1) / SY, c10 / SXT], [-r10 / SY, (c10 + 1) / SXT]]);
+  else hl.setBounds([[-row - 1, col], [-row, col + 1]]);
+  if (!map.hasLayer(hl)) hl.addTo(map);
 }
 map.on('mousemove click', showPx);
 map.on('mouseout dragstart zoomstart', hidePx);
