@@ -111,6 +111,8 @@ def main():
         im = Image.open(src).convert("RGB")
         im.thumbnail((1800, 1800))
         im.save(os.path.join(MAPS_OUT, "lst_" + key + "_preview.jpg"), quality=85)
+        # Ảnh vuông chỉ vùng Hà Nội cho thẻ ở trang bìa (theo bố cục bản đồ 3507 x 2480 px)
+        Image.open(src).convert("RGB").crop((180, 110, 2340, 2270)).resize((800, 800), Image.LANCZOS).save(os.path.join(MAPS_OUT, "lst_" + key + "_card.jpg"), quality=82)
         meta["maps"][key] = {"file": "assets/maps/" + dst, "preview": "assets/maps/lst_" + key + "_preview.jpg",
                              "bytes": os.path.getsize(src)}
 

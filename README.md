@@ -7,7 +7,8 @@ Dự án tham gia **NASA Space Apps Challenge 2026** (Hà Nội).
 
 | Phần | Trang | Nội dung |
 | --- | --- | --- |
-| 01 | `index.html` | Nhiệt độ bề mặt (LST) theo ngày, 2017 và 2025 |
+| – | `index.html` | Trang bìa |
+| 01 | `daily.html` | Nhiệt độ bề mặt (LST) theo ngày, 2017 và 2025 |
 | 02 | `normalized.html` | LST trung bình năm, LST chuẩn hóa, phân cấp và biến động phân cấp |
 | 03 | `builtup.html` | Đất xây dựng 2017, 2025 và biến động |
 
