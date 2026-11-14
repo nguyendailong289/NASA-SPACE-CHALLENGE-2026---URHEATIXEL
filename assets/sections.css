@@ -1,4 +1,4 @@
-/* Bố cục chung cho các trang phần 02, 03 (bản đồ raster + thống kê) */
+/* Shared layout for parts 02–05 (raster map + statistics) */
 main{max-width:1400px;margin:0 auto;padding:24px;display:grid;gap:32px}
 @media (max-width:600px){main{padding:16px;gap:24px}}
 
@@ -11,7 +11,7 @@ main{max-width:1400px;margin:0 auto;padding:24px;display:grid;gap:32px}
 .sec-title{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin:0 0 16px;font-size:20px;font-weight:600}
 .sec-title span{font-family:var(--mono);font-size:13px;color:var(--muted);font-weight:500}
 
-/* ---- Bản đồ ---- */
+/* ---- Map ---- */
 .map-shell{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:0;overflow:hidden}
 @media (max-width:1000px){.map-shell{grid-template-columns:1fr}}
 .map-main{display:grid;grid-template-rows:auto 1fr;min-width:0}
@@ -56,7 +56,7 @@ main{max-width:1400px;margin:0 auto;padding:24px;display:grid;gap:32px}
 :root[data-theme="light"] .dl{color:#fff}
 .note{font-size:13px;color:var(--muted);margin:0}
 
-/* ---- Thống kê ---- */
+/* ---- Statistics ---- */
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 @media (max-width:1000px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:480px){.kpis{grid-template-columns:1fr}}

@@ -16,7 +16,7 @@ import numpy as np
 import rasterio
 from PIL import Image
 
-from build_data import read_shp, read_dbf, simplify, contains
+from build_data import read_shp, read_dbf, simplify, contains, en_name
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 NDVI = os.path.join(ROOT, "2_Data", "NDVI")
@@ -73,7 +73,7 @@ def main():
     # Ranh giới + pixel -> xã
     meta["tinh"] = [simplify(r) for rec in read_shp(os.path.join(AREA, "Ha_noi_tinh.shp")) for r in rec]
     xa_shapes = read_shp(os.path.join(AREA, "Ha_noi_xa.shp"))
-    names = [a["tenXa"] for a in read_dbf(os.path.join(AREA, "Ha_noi_xa.dbf"))]
+    names = [en_name(a["tenXa"]) for a in read_dbf(os.path.join(AREA, "Ha_noi_xa.dbf"))]
     meta["xa"] = [{"ten": n, "rings": [simplify(r) for r in rings]} for rings, n in zip(xa_shapes, names)]
     cols, rows = np.meshgrid(np.arange(w) + 0.5, np.arange(h) + 0.5)
     xs, ys = tr.c + cols * tr.a, tr.f + rows * tr.e

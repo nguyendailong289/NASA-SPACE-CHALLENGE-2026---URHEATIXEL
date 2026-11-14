@@ -1,4 +1,4 @@
-/* Dùng chung cho mọi trang UrHeatixel */
+/* Shared by all UrHeatixel pages */
 :root{
   --bg:#0B1120; --surface:#111a2e; --surface-2:#17223a; --border:#26334f;
   --fg:#E6ECF5; --muted:#94A3B8; --accent:#F59E0B;
@@ -40,7 +40,7 @@ nav.parts .sh{display:none}
 .icon-btn:hover{background:var(--surface-2)}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
-/* Logo tròn: NASA Space Apps · đội · dự án */
+/* Round logos: NASA Space Apps · team · project */
 .logos{display:flex;gap:6px;flex:none}
 .logos img{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#fff;box-shadow:0 0 0 1px var(--border),0 2px 6px rgba(0,0,0,.25)}
 @media (max-width:600px){.logos{gap:4px}.logos img{width:30px;height:30px}}

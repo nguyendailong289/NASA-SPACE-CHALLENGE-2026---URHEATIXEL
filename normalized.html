@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="vi">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>UrHeatixel · LST chuẩn hóa Hà Nội</title>
+<title>UrHeatixel · Hanoi Normalized LST</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
@@ -21,7 +21,7 @@
 .px-tip .row{grid-template-columns:44px 64px 50px 12px auto}
 .px-tip .hd{display:grid;grid-template-columns:44px 64px 50px 12px auto;gap:6px;color:#94A3B8;font-size:11px;margin-top:2px}
 
-/* Biểu đồ cột ngang so sánh 2 năm theo cấp */
+/* Horizontal bar chart comparing the two years by class */
 .bars{display:grid;gap:14px}
 .bar-row{display:grid;grid-template-columns:140px minmax(0,1fr);gap:12px;align-items:center}
 @media (max-width:480px){.bar-row{grid-template-columns:1fr;gap:4px}}
@@ -40,7 +40,7 @@ td.pos{color:var(--hl)} td.neg{color:var(--y17)}
 .final .empty{display:grid;place-items:center;height:100%;color:var(--muted);font-size:15px;padding:24px}
 .dl[aria-disabled="true"]{background:var(--surface-2);color:var(--muted);pointer-events:none;box-shadow:inset 0 0 0 1px var(--border)}
 
-/* Ma trận biến động */
+/* Change matrix */
 .matrix{border-collapse:separate;border-spacing:3px;width:100%;font-size:13px}
 .matrix th,.matrix td{border:0;padding:8px 6px;text-align:center;white-space:nowrap}
 .matrix th{font-size:11px;letter-spacing:.04em}
@@ -64,21 +64,21 @@ td.pos{color:var(--hl)} td.neg{color:var(--y17)}
 <body>
 <header class="top">
   <a class="brand" href="index.html">
-    <span class="logos"><img src="assets/logos/nasa.png" alt="NASA Space Apps Challenge" width="36" height="36"><img src="assets/logos/team.png" alt="Đội Long Geo – Geomatics" width="36" height="36"><img src="assets/logos/project.png" alt="Logo dự án UrHeatixel" width="36" height="36"></span>
+    <span class="logos"><img src="assets/logos/nasa.png" alt="NASA Space Apps Challenge" width="36" height="36"><img src="assets/logos/team.png" alt="Team Long Geo – Geomatics" width="36" height="36"><img src="assets/logos/project.png" alt="UrHeatixel project logo" width="36" height="36"></span>
     <div>
       <h1>UrHeatixel</h1>
-      <p>LST chuẩn hóa · Hà Nội · MODIS MOD11A1 · 2017 &amp; 2025</p>
+      <p>Normalized LST · Hanoi · MODIS MOD11A1 · 2017 &amp; 2025</p>
     </div>
   </a>
   <div class="top-right">
-    <nav class="parts" aria-label="Các phần">
-      <a href="daily.html"><b>01</b><span class="lb">Nhiệt độ bề mặt đất</span><span class="sh">LST</span></a>
-      <a href="normalized.html" aria-current="page"><b>02</b><span class="lb">LST chuẩn hóa</span><span class="sh">Chuẩn hóa</span></a>
-      <a href="builtup.html"><b>03</b><span class="lb">Đất xây dựng</span><span class="sh">Xây dựng</span></a>
-      <a href="ndvi.html"><b>04</b><span class="lb">Thực vật NDVI</span><span class="sh">NDVI</span></a>
-      <a href="hotspot.html"><b>05</b><span class="lb">Điểm nóng</span><span class="sh">Điểm nóng</span></a>
+    <nav class="parts" aria-label="Parts">
+      <a href="daily.html"><b>01</b><span class="lb">Land Surface Temperature</span><span class="sh">LST</span></a>
+      <a href="normalized.html" aria-current="page"><b>02</b><span class="lb">Normalized LST</span><span class="sh">Normalized</span></a>
+      <a href="builtup.html"><b>03</b><span class="lb">Built-up Area</span><span class="sh">Built-up</span></a>
+      <a href="ndvi.html"><b>04</b><span class="lb">Vegetation NDVI</span><span class="sh">NDVI</span></a>
+      <a href="hotspot.html"><b>05</b><span class="lb">Hotspots</span><span class="sh">Hotspots</span></a>
     </nav>
-    <button class="icon-btn" id="themeBtn" aria-label="Đổi giao diện sáng/tối">
+    <button class="icon-btn" id="themeBtn" aria-label="Toggle light/dark theme">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
     </button>
   </div>
@@ -86,35 +86,35 @@ td.pos{color:var(--hl)} td.neg{color:var(--y17)}
 
 <main>
   <section class="intro">
-    <div class="eyebrow">PHẦN 02 · XU HƯỚNG</div>
-    <h2>Vùng nhiệt độ bề mặt đất cao lan từ lõi đô thị ra ngoại vi</h2>
-    <p>LST trung bình năm (°C) được gộp từ các ảnh <b>MODIS MOD11A1</b> theo ngày. Để so sánh hai năm có mức nhiệt khác nhau, LST được <b>chuẩn hóa min–max về khoảng 0–1 trong từng năm</b>, rồi chia thành <b>5 cấp</b> với bước 0,2: Very Low, Low, Moderate, High, Very High.</p>
+    <div class="eyebrow">PART 02 · TREND</div>
+    <h2>High land surface temperature zones are spreading from the urban core to the periphery</h2>
+    <p>Annual mean LST (°C) is built from the daily <b>MODIS MOD11A1</b> images. To compare two years with different overall temperatures, LST is <b>min–max normalized to 0–1 within each year</b>, then split into <b>5 classes</b> in steps of 0.2: Very Low, Low, Moderate, High, Very High.</p>
   </section>
 
-  <!-- ============ 1. BẢN ĐỒ ============ -->
+  <!-- ============ 1. MAP ============ -->
   <section aria-labelledby="secMap">
-    <h2 class="sec-title" id="secMap">Bản đồ LST <span>pixel 1 km · kéo / cuộn để phóng to</span></h2>
+    <h2 class="sec-title" id="secMap">LST map <span>1 km pixels · drag / scroll to zoom</span></h2>
     <div class="card map-shell">
       <div class="map-main">
         <div class="map-bar">
           <div class="grp">
-            <div class="seg" role="group" aria-label="Chọn năm">
-              <button data-year="2017" aria-pressed="true">Năm 2017</button>
-              <button data-year="2025" aria-pressed="false">Năm 2025</button>
+            <div class="seg" role="group" aria-label="Select year">
+              <button data-year="2017" aria-pressed="true">Year 2017</button>
+              <button data-year="2025" aria-pressed="false">Year 2025</button>
             </div>
-            <div class="seg" role="group" aria-label="Chọn lớp">
-              <button data-kind="class" aria-pressed="true">Phân cấp chuẩn hóa</button>
-              <button data-kind="change" aria-pressed="false">Biến động 2017→2025</button>
+            <div class="seg" role="group" aria-label="Select layer">
+              <button data-kind="class" aria-pressed="true">Normalized classes</button>
+              <button data-kind="change" aria-pressed="false">Change 2017→2025</button>
             </div>
           </div>
-          <div class="seg" role="group" aria-label="Kiểu hiển thị">
-            <button data-view="raster" aria-pressed="true">Lớp raster</button>
-            <button data-view="final" aria-pressed="false">Bản đồ kết quả</button>
+          <div class="seg" role="group" aria-label="View mode">
+            <button data-view="raster" aria-pressed="true">Raster layer</button>
+            <button data-view="final" aria-pressed="false">Final map</button>
           </div>
         </div>
         <div class="view" id="view" data-view="raster">
-          <div id="map" role="region" aria-label="Bản đồ raster LST"></div>
-          <div class="final"><a id="finalLink" target="_blank" rel="noopener"><img id="finalImg" alt=""></a><div class="empty" id="finalEmpty" hidden>Bản đồ kết quả cho lớp này sẽ được bổ sung.</div></div>
+          <div id="map" role="region" aria-label="LST raster map"></div>
+          <div class="final"><a id="finalLink" target="_blank" rel="noopener"><img id="finalImg" alt=""></a><div class="empty" id="finalEmpty" hidden>The final map for this layer will be added.</div></div>
         </div>
       </div>
       <div class="map-side">
@@ -123,44 +123,44 @@ td.pos{color:var(--hl)} td.neg{color:var(--y17)}
           <p class="sub" id="lySub">–</p>
         </div>
         <div>
-          <h3>Chú giải</h3>
+          <h3>Legend</h3>
           <div id="legend"></div>
         </div>
         <div id="boundaryBox">
-          <h3>Ranh giới</h3>
-          <label class="layer"><input type="checkbox" id="lyTinh" checked> Ranh giới tỉnh</label>
-          <label class="layer"><input type="checkbox" id="lyXa" checked> Ranh giới xã (126 đơn vị)</label>
+          <h3>Boundaries</h3>
+          <label class="layer"><input type="checkbox" id="lyTinh" checked> City boundary</label>
+          <label class="layer"><input type="checkbox" id="lyXa" checked> Commune boundaries (126 units)</label>
         </div>
         <div style="display:grid;gap:8px">
           <a class="dl" id="dlBtn" download>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-            Tải bản đồ <small id="dlSize"></small>
+            Download map <small id="dlSize"></small>
           </a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============ 2. THỐNG KÊ ============ -->
+  <!-- ============ 2. STATISTICS ============ -->
   <section aria-labelledby="secStat">
-    <h2 class="sec-title" id="secStat">Kết quả thống kê <span>diện tích theo cấp LST chuẩn hóa</span></h2>
+    <h2 class="sec-title" id="secStat">Statistics <span>area by normalized LST class</span></h2>
 
     <div class="kpis">
-      <div class="card kpi"><span class="lbl">Vùng nhiệt cao 2017 <small>(High + Very High)</small></span><span class="val" id="kH17">–</span><span class="sub"><b id="kH17p">–</b> diện tích khu vực</span></div>
-      <div class="card kpi hl"><span class="lbl">Vùng nhiệt cao 2025 <small>(High + Very High)</small></span><span class="val" id="kH25">–</span><span class="sub"><b id="kH25p">–</b> diện tích khu vực</span></div>
+      <div class="card kpi"><span class="lbl">High-heat zone 2017 <small>(High + Very High)</small></span><span class="val" id="kH17">–</span><span class="sub"><b id="kH17p">–</b> of the study area</span></div>
+      <div class="card kpi hl"><span class="lbl">High-heat zone 2025 <small>(High + Very High)</small></span><span class="val" id="kH25">–</span><span class="sub"><b id="kH25p">–</b> of the study area</span></div>
     </div>
 
     <div class="tables">
       <div class="card tcard">
-        <h3>Tỷ lệ diện tích theo cấp</h3>
+        <h3>Share of area by class</h3>
         <div class="bar-legend"><span><i style="background:var(--y17)"></i>2017</span><span><i style="background:var(--y25)"></i>2025</span></div>
         <div class="bars" id="bars" role="img"></div>
       </div>
       <div class="card tcard">
-        <h3>Bảng 3. Diện tích các cấp LST chuẩn hóa năm 2017 và 2025</h3>
+        <h3>Table 3. Area of normalized LST classes, 2017 and 2025</h3>
         <div class="tbl-wrap"><table>
           <thead>
-            <tr><th rowspan="2">Cấp (khoảng giá trị)</th><th colspan="2" style="text-align:center">2017</th><th colspan="2" style="text-align:center">2025</th><th rowspan="2">Thay đổi (km²)</th></tr>
+            <tr><th rowspan="2">Class (value range)</th><th colspan="2" style="text-align:center">2017</th><th colspan="2" style="text-align:center">2025</th><th rowspan="2">Change (km²)</th></tr>
             <tr><th>km²</th><th>%</th><th>km²</th><th>%</th></tr>
           </thead>
           <tbody id="tb"></tbody>
@@ -171,31 +171,31 @@ td.pos{color:var(--hl)} td.neg{color:var(--y17)}
 
     <div class="tables two">
       <div class="card tcard">
-        <h3>Bảng 4. Ma trận biến động phân cấp LST chuẩn hóa 2017 → 2025 (km²)</h3>
+        <h3>Table 4. Normalized LST class change matrix, 2017 → 2025 (km²)</h3>
         <div class="chg-sum" id="chgSum"></div>
         <div class="tbl-wrap"><table class="matrix" id="matrix"></table></div>
-        <p>Hàng là cấp năm 2017, cột là cấp năm 2025. Ô có viền là các pixel <b>giữ nguyên cấp</b>; ô phía trên bên phải đường chéo là tăng cấp, phía dưới bên trái là giảm cấp. Màu ô trùng màu mã trên bản đồ.</p>
+        <p>Rows are the 2017 class, columns the 2025 class. Outlined cells are pixels that <b>kept their class</b>; cells above and right of the diagonal moved up a class, cells below and left moved down. Cell colors match the codes on the map.</p>
       </div>
       <div class="card tcard">
-        <h3>Bảng 5. Diện tích theo mã biến động (11 – 55)</h3>
+        <h3>Table 5. Area by change code (11 – 55)</h3>
         <div class="tbl-wrap"><table>
-          <thead><tr><th>Mã · 2017 → 2025</th><th>Pixel</th><th>km²</th><th>%</th></tr></thead>
+          <thead><tr><th>Code · 2017 → 2025</th><th>Pixels</th><th>km²</th><th>%</th></tr></thead>
           <tbody id="tbTrans"></tbody>
         </table></div>
-        <p>Mã = cấp 2017 × 10 + cấp 2025; ví dụ 34 là Moderate (2017) → High (2025).</p>
+        <p>Code = 2017 class × 10 + 2025 class; e.g. 34 means Moderate (2017) → High (2025).</p>
       </div>
     </div>
 
     <div class="card link-card">
-      <div><div class="eyebrow" style="margin-bottom:6px">KẾT LUẬN</div>
-      <p>Vùng nhiệt cao (High + Very High) mở rộng từ <b>21,1%</b> lên <b>65,8%</b> diện tích, chủ yếu do <b>Moderate → High</b> (43,5% diện tích). Vùng này cũng <b>dịch ra xa trung tâm</b>: khoảng cách trung bình tới Hồ Hoàn Kiếm tăng từ 20,0 km lên 26,8 km, và tỷ lệ nằm trong bán kính 10 km giảm từ 18,8% xuống 9,4%. Vì dữ liệu được chuẩn hóa trong từng năm, đây là thay đổi về <b>phân bố không gian</b>, không phải mức nhiệt tuyệt đối. Vậy điều gì khiến vùng nhiệt cao lan ra? Phần 03 xem xét đất xây dựng.</p></div>
-      <a href="builtup.html">Tiếp: Phần 03 · Đất xây dựng
+      <div><div class="eyebrow" style="margin-bottom:6px">CONCLUSION</div>
+      <p>The high-heat zone (High + Very High) grew from <b>21.1%</b> to <b>65.8%</b> of the area, mostly through <b>Moderate → High</b> (43.5% of the area). The zone also <b>moved away from the center</b>: its mean distance to Hoan Kiem Lake rose from 20.0 km to 26.8 km, and the share within 10 km fell from 18.8% to 9.4%. Because the data are normalized within each year, this is a change in <b>spatial distribution</b>, not in absolute temperature. So what is pushing the high-heat zone outward? Part 03 looks at built-up land.</p></div>
+      <a href="builtup.html">Next: Part 03 · Built-up area
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
       </a>
     </div>
   </section>
 </main>
-<footer>UrHeatixel · NASA Space Apps Challenge Hanoi 2026 · Dữ liệu: NASA MODIS MOD11A1 v061 (1 km)</footer>
+<footer>UrHeatixel · NASA Space Apps Challenge Hanoi 2026 · Data: NASA MODIS MOD11A1 v061 (1 km)</footer>
 <div class="px-tip" id="pxTip"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -206,15 +206,15 @@ const N = window.LSTN;
 const W = N.width, H = N.height, [lonMin, latMin, lonMax, latMax] = N.bounds;
 const YEARS = ['2017', '2025'];
 const dx = (lonMax - lonMin) / W, dy = (latMax - latMin) / H;
-const SX = Math.cos((latMin + latMax) / 2 * Math.PI / 180) * dx / dy; // hiệu chỉnh tỉ lệ kinh/vĩ độ
+const SX = Math.cos((latMin + latMax) / 2 * Math.PI / 180) * dx / dy; // lon/lat aspect correction
 
-/* ---------- Màu (magma, như bản đồ kết quả) ---------- */
+/* ---------- Colors (magma, as in the final maps) ---------- */
 const CLASSES = [
-  { k:1, name:'Very Low',  vi:'Rất thấp',   range:'0,0 – 0,2', color:'#000004' },
-  { k:2, name:'Low',       vi:'Thấp',       range:'0,2 – 0,4', color:'#50127b' },
-  { k:3, name:'Moderate',  vi:'Trung bình', range:'0,4 – 0,6', color:'#b6377a' },
-  { k:4, name:'High',      vi:'Cao',        range:'0,6 – 0,8', color:'#fb8761' },
-  { k:5, name:'Very High', vi:'Rất cao',    range:'0,8 – 1,0', color:'#fcfdbf' },
+  { k:1, name:'Very Low',  range:'0.0 – 0.2', color:'#000004' },
+  { k:2, name:'Low',       range:'0.2 – 0.4', color:'#50127b' },
+  { k:3, name:'Moderate',  range:'0.4 – 0.6', color:'#b6377a' },
+  { k:4, name:'High',      range:'0.6 – 0.8', color:'#fb8761' },
+  { k:5, name:'Very High', range:'0.8 – 1.0', color:'#fcfdbf' },
 ];
 const MAGMA = ['#000004','#140e36','#3b0f70','#641a80','#8c2981','#b73779','#de4968','#f7705c','#fe9f6d','#fecf92','#fcfdbf']
   .map(h => [1,3,5].map(i => parseInt(h.slice(i, i + 2), 16)));
@@ -225,22 +225,22 @@ function magma(t){
   return a.map((v, j) => Math.round(v + (b[j] - v) * f));
 }
 
-/* ---------- Biến động 2017 -> 2025 (theo số cấp thay đổi) ---------- */
+/* ---------- Change 2017 -> 2025 (by number of classes moved) ---------- */
 const DELTA = {
-  '-2': { name:'Giảm 2 cấp', color:'#1D4ED8' },
-  '-1': { name:'Giảm 1 cấp', color:'#60A5FA' },
-  '0':  { name:'Giữ nguyên cấp', color:'#CBD5E1' },
-  '1':  { name:'Tăng 1 cấp', color:'#FB923C' },
-  '2':  { name:'Tăng 2 cấp', color:'#DC2626' },
+  '-2': { name:'Down 2 classes', color:'#1D4ED8' },
+  '-1': { name:'Down 1 class', color:'#60A5FA' },
+  '0':  { name:'Same class', color:'#CBD5E1' },
+  '1':  { name:'Up 1 class', color:'#FB923C' },
+  '2':  { name:'Up 2 classes', color:'#DC2626' },
 };
 const transCode = i => N.years['2017'].cls[i] * 10 + N.years['2025'].cls[i];
 const deltaOf = code => Math.max(-2, Math.min(2, (code % 10) - Math.floor(code / 10)));
 const deltaKm2 = {}; for (const [code, v] of Object.entries(N.trans)){ const d = deltaOf(+code); deltaKm2[d] = (deltaKm2[d] || 0) + v.km2; }
-// Màu từng mã biến động, lấy từ bản đồ kết quả (QGIS Map_LST_Change)
+// Color of each change code, taken from the final map (QGIS Map_LST_Change)
 const TCOLOR = { 11:'#0a0822', 12:'#1d1047', 13:'#36106a', 21:'#50127b', 22:'#6a1c81', 23:'#822581', 24:'#9b2e7f', 32:'#b6377a', 33:'#d04170', 34:'#e65164', 35:'#f46a5c', 43:'#fb8761', 44:'#fea571', 45:'#fec387', 54:'#fde0a1', 55:'#fcfdbf' };
 const inkOn = h => { const [r, g, b] = hex(h); return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.55 ? '#111' : '#fff'; };
 
-/* ---------- Ảnh raster dựng từ dữ liệu ---------- */
+/* ---------- Raster image built from the data ---------- */
 const urls = {};
 function rasterUrl(kind, year){
   if (kind === 'change') year = '';
@@ -259,7 +259,7 @@ function rasterUrl(kind, year){
   return urls[key] = cv.toDataURL();
 }
 
-/* ---------- Bản đồ ---------- */
+/* ---------- Map ---------- */
 const map = L.map('map', { crs: L.CRS.Simple, minZoom: 0, maxZoom: 6, zoomSnap: 0.25, zoomDelta: 0.5, attributionControl: false, preferCanvas: true });
 const bounds = [[-H, 0], [0, W * SX]];
 const overlay = L.imageOverlay(rasterUrl('class', '2017'), bounds).addTo(map);
@@ -271,31 +271,31 @@ const tinh = L.polyline(N.tinh.map(r => r.map(P)), { color:'#ffffff', weight:2.5
 document.getElementById('lyTinh').onchange = e => e.target.checked ? tinh.addTo(map) : tinh.remove();
 document.getElementById('lyXa').onchange = e => e.target.checked ? xa.addTo(map) : xa.remove();
 
-const f1 = (v, d = 1) => v.toLocaleString('vi-VN', { minimumFractionDigits:d, maximumFractionDigits:d });
-const fmtMB = b => (b / 1048576).toLocaleString('vi-VN', { maximumFractionDigits:1 }) + ' MB';
+const f1 = (v, d = 1) => v.toLocaleString('en-US', { minimumFractionDigits:d, maximumFractionDigits:d });
+const fmtMB = b => (b / 1048576).toLocaleString('en-US', { maximumFractionDigits:1 }) + ' MB';
 const state = { year:'2017', kind:'class' };
 function update(){
   const { year, kind } = state, Y = N.years[year];
   const key = kind === 'change' ? 'change' : kind + '_' + year, m = N.maps[key];
   overlay.setUrl(rasterUrl(kind, year));
-  const yearSeg = document.querySelector('[aria-label="Chọn năm"]');
+  const yearSeg = document.querySelector('[aria-label="Select year"]');
   yearSeg.setAttribute('aria-disabled', kind === 'change');
   document.querySelectorAll('[data-year]').forEach(b => b.setAttribute('aria-pressed', kind !== 'change' && b.dataset.year === year));
   document.querySelectorAll('[data-kind]').forEach(b => b.setAttribute('aria-pressed', b.dataset.kind === kind));
   const lg = document.getElementById('legend');
   if (kind === 'change'){
-    document.getElementById('lyTitle').textContent = 'Biến động phân cấp LST 2017 → 2025';
-    document.getElementById('lySub').textContent = 'Mã = cấp 2017 × 10 + cấp 2025; màu theo bản đồ kết quả';
+    document.getElementById('lyTitle').textContent = 'Normalized LST class change 2017 → 2025';
+    document.getElementById('lySub').textContent = 'Code = 2017 class × 10 + 2025 class; colors as in the final map';
     lg.innerHTML = '<ul class="legend">' + Object.keys(N.trans).sort((a, b) => a - b).map(code =>
       `<li><span class="sw" style="background:${TCOLOR[code]}"></span><span class="nm"><b style="font-family:var(--mono);font-weight:500">${code}</b> ${CLASSES[Math.floor(code / 10) - 1].name} → ${CLASSES[code % 10 - 1].name}</span><span class="px">${f1(N.trans[code].km2)} km²</span></li>`).join('') + '</ul>';
   } else if (kind === 'class'){
-    document.getElementById('lyTitle').textContent = 'Phân cấp LST chuẩn hóa năm ' + year;
-    document.getElementById('lySub').textContent = 'Chuẩn hóa min–max trong năm, 5 cấp';
+    document.getElementById('lyTitle').textContent = 'Normalized LST classes ' + year;
+    document.getElementById('lySub').textContent = 'Min–max normalized within the year, 5 classes';
     lg.innerHTML = '<ul class="legend">' + CLASSES.map(c =>
       `<li><span class="sw" style="background:${c.color}"></span><span class="nm">${c.name} <span style="color:var(--muted);font-size:13px">(${c.range})</span></span><span class="px">${f1(Y.classKm2[c.k])} km²</span></li>`).join('') + '</ul>';
   } else {
-    document.getElementById('lyTitle').textContent = 'LST trung bình năm ' + year;
-    document.getElementById('lySub').textContent = 'Nhiệt độ bề mặt ban ngày trung bình (°C)';
+    document.getElementById('lyTitle').textContent = 'Annual mean LST ' + year;
+    document.getElementById('lySub').textContent = 'Mean daytime land surface temperature (°C)';
     lg.innerHTML = `<div class="ramp" style="background:linear-gradient(90deg,${MAGMA.map(c => `rgb(${c})`).join(',')})"></div>` +
       `<div class="ramp-ticks"><span>${f1(Y.lstMin, 2)}</span><span>${f1((Y.lstMin + Y.lstMax) / 2, 2)}</span><span>${f1(Y.lstMax, 2)} °C</span></div>`;
   }
@@ -303,13 +303,13 @@ function update(){
   const empty = document.getElementById('finalEmpty');
   if (m){
     dl.removeAttribute('aria-disabled'); dl.href = m.file; dl.setAttribute('download', m.file.split('/').pop());
-    dl.setAttribute('aria-label', 'Tải bản đồ ' + document.getElementById('lyTitle').textContent + ' (PNG)');
+    dl.setAttribute('aria-label', 'Download map ' + document.getElementById('lyTitle').textContent + ' (PNG)');
     document.getElementById('dlSize').textContent = 'PNG · ' + fmtMB(m.bytes);
-    fi.src = m.preview; fi.alt = 'Bản đồ kết quả: ' + document.getElementById('lyTitle').textContent;
+    fi.src = m.preview; fi.alt = 'Final map: ' + document.getElementById('lyTitle').textContent;
     fl.href = m.file; fl.hidden = false; empty.hidden = true;
   } else {
     dl.setAttribute('aria-disabled', 'true'); dl.removeAttribute('href');
-    document.getElementById('dlSize').textContent = '· sẽ bổ sung';
+    document.getElementById('dlSize').textContent = '· coming soon';
     fl.hidden = true; empty.hidden = false;
   }
 }
@@ -323,7 +323,7 @@ document.querySelectorAll('button[data-year]').forEach(b => b.onclick = () => { 
 document.querySelectorAll('button[data-kind]').forEach(b => b.onclick = () => { state.kind = b.dataset.kind; update(); });
 document.querySelectorAll('button[data-view]').forEach(b => b.onclick = () => setView(b.dataset.view));
 
-/* ---------- Giá trị theo pixel khi rê chuột ---------- */
+/* ---------- Pixel values on hover ---------- */
 const pxTip = document.getElementById('pxTip');
 const hl = L.rectangle([[0,0],[0,0]], { color:'#22D3EE', weight:2.5, fill:false, interactive:false });
 function hidePx(){ pxTip.style.display = 'none'; hl.remove(); }
@@ -333,15 +333,15 @@ map.on('mousemove click', e => {
   const i = row * W + col;
   if (!N.years['2017'].cls[i]) return hidePx();
   const lat = latMax - (row + .5) * dy, lon = lonMin + (col + .5) * dx;
-  const xaName = N.pixXa[i] >= 0 ? N.xa[N.pixXa[i]].ten : 'Hà Nội';
+  const xaName = N.pixXa[i] >= 0 ? N.xa[N.pixXa[i]].ten : 'Hanoi';
   const rows = YEARS.map(y => {
     const Y = N.years[y], c = CLASSES[Y.cls[i] - 1];
     return `<div class="row${y === state.year ? ' on' : ''}"><span>${y}</span><span>${f1(Y.mean[i], 2)} °C</span><span>${f1(Y.norm[i], 3)}</span><i style="background:${c.color}"></i><span>${c.name}</span></div>`;
   }).join('');
-  pxTip.innerHTML = `<div class="nm">${xaName}</div><div class="co">${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E · ô 1 km</div>` +
-    `<div class="hd"><span>Năm</span><span>LST</span><span>Chuẩn</span><span></span><span>Cấp</span></div>` + rows +
+  pxTip.innerHTML = `<div class="nm">${xaName}</div><div class="co">${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E · 1 km cell</div>` +
+    `<div class="hd"><span>Year</span><span>LST</span><span>Norm.</span><span></span><span>Class</span></div>` + rows +
     (() => { const code = transCode(i), dl = DELTA[deltaOf(code)];
-      return `<div class="row${state.kind === 'change' ? ' on' : ''}" style="margin-top:4px;grid-template-columns:44px 12px auto"><span>Mã ${code}</span><i style="background:${TCOLOR[code]}"></i><span>${CLASSES[Math.floor(code / 10) - 1].name} → ${CLASSES[code % 10 - 1].name} (${dl.name.toLowerCase()})</span></div>`; })();
+      return `<div class="row${state.kind === 'change' ? ' on' : ''}" style="margin-top:4px;grid-template-columns:52px 12px auto"><span>Code ${code}</span><i style="background:${TCOLOR[code]}"></i><span>${CLASSES[Math.floor(code / 10) - 1].name} → ${CLASSES[code % 10 - 1].name} (${dl.name.toLowerCase()})</span></div>`; })();
   pxTip.style.display = 'block';
   const ev = e.originalEvent, tw = pxTip.offsetWidth, th = pxTip.offsetHeight;
   let tx = ev.clientX + 16, ty = ev.clientY + 16;
@@ -352,7 +352,7 @@ map.on('mousemove click', e => {
 });
 map.on('mouseout dragstart zoomstart', hidePx);
 
-/* ---------- Thống kê ---------- */
+/* ---------- Statistics ---------- */
 const T = N.totalKm2, pct = v => f1(v / T * 100, 2) + '%';
 const y17 = N.years['2017'], y25 = N.years['2025'];
 const high = Y => Y.classKm2[4] + Y.classKm2[5];
@@ -366,15 +366,15 @@ document.getElementById('tb').innerHTML = CLASSES.map(c => {
   return `<tr><td><span class="sw" style="background:${c.color}"></span>${c.name} (${c.range})</td>` +
     `<td>${f1(a)}</td><td>${pct(a)}</td><td>${f1(b)}</td><td>${pct(b)}</td>` +
     `<td class="${d > 0 ? 'pos' : 'neg'}">${d > 0 ? '+' : ''}${f1(d)}</td></tr>`;
-}).join('') + `<tr><td><b>Tổng</b></td><td>${f1(T)}</td><td>100%</td><td>${f1(T)}</td><td>100%</td><td></td></tr>`;
+}).join('') + `<tr><td><b>Total</b></td><td>${f1(T)}</td><td>100%</td><td>${f1(T)}</td><td>100%</td><td></td></tr>`;
 document.getElementById('tnote').innerHTML =
-  `Diện tích tính theo ${N.totalPx.toLocaleString('vi-VN')} pixel 1 km phủ khu vực Hà Nội (có hiệu chỉnh theo vĩ độ). ` +
-  `Vùng nhiệt cao (High + Very High) tăng từ <b>${f1(high(y17))} km²</b> (${pct(high(y17))}) năm 2017 lên <b>${f1(high(y25))} km²</b> (${pct(high(y25))}) năm 2025.`;
+  `Areas are computed from ${N.totalPx.toLocaleString('en-US')} 1 km pixels covering Hanoi (latitude-corrected). ` +
+  `The high-heat zone (High + Very High) grew from <b>${f1(high(y17))} km²</b> (${pct(high(y17))}) in 2017 to <b>${f1(high(y25))} km²</b> (${pct(high(y25))}) in 2025.`;
 
-// Biểu đồ cột ngang: % diện tích mỗi cấp, 2017 vs 2025 (chung một trục 0–max)
+// Horizontal bars: % of area per class, 2017 vs 2025 (shared 0–max axis)
 const maxP = Math.max(...CLASSES.flatMap(c => [y17.classKm2[c.k], y25.classKm2[c.k]])) / T * 100;
 const bars = document.getElementById('bars');
-bars.setAttribute('aria-label', 'Tỷ lệ diện tích theo cấp: ' + CLASSES.map(c => `${c.name} 2017 ${pct(y17.classKm2[c.k])}, 2025 ${pct(y25.classKm2[c.k])}`).join('; '));
+bars.setAttribute('aria-label', 'Share of area by class: ' + CLASSES.map(c => `${c.name} 2017 ${pct(y17.classKm2[c.k])}, 2025 ${pct(y25.classKm2[c.k])}`).join('; '));
 bars.innerHTML = CLASSES.map(c => {
   const line = (Y, col, y) => { const p = Y.classKm2[c.k] / T * 100;
     return `<div class="bar-line" title="${c.name} ${y}: ${f1(Y.classKm2[c.k])} km² (${pct(Y.classKm2[c.k])})"><div class="b" style="width:${p / maxP * 82}%;background:${col}"></div><span class="v">${f1(p, 1)}%</span></div>`; };
@@ -382,13 +382,13 @@ bars.innerHTML = CLASSES.map(c => {
     `<div class="bar-pair">${line(y17, 'var(--y17)', '2017')}${line(y25, 'var(--y25)', '2025')}</div></div>`;
 }).join('');
 
-/* ---------- Ma trận & bảng biến động ---------- */
+/* ---------- Change matrix & table ---------- */
 const TR = N.trans, maxTr = Math.max(...Object.values(TR).map(v => v.km2));
 const sumD = s => Object.entries(deltaKm2).filter(([d]) => s(+d)).reduce((a, [, v]) => a + v, 0);
 document.getElementById('chgSum').innerHTML = [
-  ['Tăng cấp', DELTA['1'].color, sumD(d => d > 0)],
-  ['Giữ nguyên', DELTA['0'].color, sumD(d => d === 0)],
-  ['Giảm cấp', DELTA['-1'].color, sumD(d => d < 0)],
+  ['Moved up', DELTA['1'].color, sumD(d => d > 0)],
+  ['Unchanged', DELTA['0'].color, sumD(d => d === 0)],
+  ['Moved down', DELTA['-1'].color, sumD(d => d < 0)],
 ].map(([n, c, v]) => `<div><span><i style="background:${c}"></i>${n}</span><b>${f1(v)} km²</b><small>${pct(v)}</small></div>`).join('');
 
 const rgba = (h, a) => `rgba(${hex(h).join(',')},${a})`;
@@ -400,7 +400,7 @@ CLASSES.forEach(r => {
     if (!v){ mx += `<td class="zero${diag ? ' diag' : ''}">–</td>`; return; }
     const col = TCOLOR[code];
     mx += `<td class="${diag ? 'diag' : ''}" style="background:${col};color:${inkOn(col)}" ` +
-      `title="Mã ${code}: ${r.name} → ${c.name} · ${f1(v.km2)} km² · ${v.px} pixel">${f1(v.km2)}<small>${v.px} px</small></td>`;
+      `title="Code ${code}: ${r.name} → ${c.name} · ${f1(v.km2)} km² · ${v.px} pixels">${f1(v.km2)}<small>${v.px} px</small></td>`;
   });
   mx += '</tr>';
 });
@@ -409,7 +409,7 @@ document.getElementById('matrix').innerHTML = mx + '</tbody>';
 document.getElementById('tbTrans').innerHTML = Object.entries(TR).sort((a, b) => a[0] - b[0]).map(([code, v]) => {
   const a = CLASSES[Math.floor(code / 10) - 1], b = CLASSES[code % 10 - 1], dl = DELTA[deltaOf(+code)];
   return `<tr><td><span class="sw" style="background:${TCOLOR[code]}"></span><b style="font-family:var(--mono)">${code}</b> · ${a.name} → ${b.name}</td>` +
-    `<td>${v.px.toLocaleString('vi-VN')}</td><td>${f1(v.km2)}</td><td>${pct(v.km2)}</td></tr>`;
+    `<td>${v.px.toLocaleString('en-US')}</td><td>${f1(v.km2)}</td><td>${pct(v.km2)}</td></tr>`;
 }).join('');
 
 update();

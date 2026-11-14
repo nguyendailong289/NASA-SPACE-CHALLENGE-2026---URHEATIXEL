@@ -26,6 +26,16 @@ SCALE = 0.02          # MOD11A1: raw * 0.02 = Kelvin
 SIMPLIFY_DEG = 0.0004  # bỏ bớt đỉnh gần nhau hơn ~40 m cho file nhẹ
 
 
+def en_name(t):
+    """'Phường Tương Mai' -> 'Tương Mai Ward', 'Xã Ba Vì' -> 'Ba Vì Commune' (tên hiển thị tiếng Anh)."""
+    t = t.strip()
+    if t.startswith("Phường "):
+        return t[7:] + " Ward"
+    if t.startswith("Xã "):
+        return t[3:] + " Commune"
+    return t
+
+
 def b64(arr):
     return base64.b64encode(np.ascontiguousarray(arr).tobytes()).decode("ascii")
 
@@ -115,7 +125,7 @@ def main():
 
     xa_shapes = read_shp(os.path.join(AREA_DIR, "Ha_noi_xa.shp"))
     xa_attrs = read_dbf(os.path.join(AREA_DIR, "Ha_noi_xa.dbf"))
-    data["xa"] = [{"ten": a["tenXa"], "danSo": a["danSo"], "dienTich": a["dienTich"],
+    data["xa"] = [{"ten": en_name(a["tenXa"]), "danSo": a["danSo"], "dienTich": a["dienTich"],
                    "rings": [simplify(r) for r in rings]}
                   for rings, a in zip(xa_shapes, xa_attrs)]
     print(f"Ranh giới: tỉnh {len(data['tinh'])} vòng, xã {len(data['xa'])} đơn vị")

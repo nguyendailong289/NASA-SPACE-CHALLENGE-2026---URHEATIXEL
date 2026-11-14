@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="vi">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>UrHeatixel · Vùng nhiệt cao Hà Nội</title>
-<meta name="description" content="UrHeatixel – giám sát biến động không gian của các vùng nhiệt độ cao phục vụ nhận diện xu hướng mở rộng đô thị tại Hà Nội. NASA Space Apps Challenge 2026.">
+<title>UrHeatixel · Hanoi Hot Zones</title>
+<meta name="description" content="UrHeatixel – monitoring the spatial dynamics of high land surface temperature zones to identify urban expansion trends in Hanoi. NASA Space Apps Challenge 2026.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" href="assets/logos/project_64.png" type="image/png">
@@ -41,7 +41,7 @@ main{max-width:1280px;margin:0 auto;padding:0 24px}
 .btn svg{transition:transform .2s}
 .btn:hover svg{transform:translateX(3px)}
 
-/* ---- Bản đồ pixel ---- */
+/* ---- Pixel map ---- */
 .viz{position:relative;padding:20px;border-radius:20px;background:var(--surface);border:1px solid var(--border)}
 .viz-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
 .viz-head .t{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
@@ -60,7 +60,7 @@ main{max-width:1280px;margin:0 auto;padding:0 24px}
 .legend5 div{flex:1;padding:6px 4px;font-size:11px;text-align:center;font-weight:500}
 @media (prefers-reduced-motion:reduce){.map-box canvas{transition:none}}
 
-/* ---- Số liệu chính ---- */
+/* ---- Key figures ---- */
 .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:16px 0 56px}
 @media (max-width:760px){.stats{grid-template-columns:1fr}}
 .stat{padding:20px;display:grid;gap:6px;align-content:start}
@@ -69,7 +69,7 @@ main{max-width:1280px;margin:0 auto;padding:0 24px}
 .stat .n .hot{color:#fb8761}
 .stat .d{color:var(--muted);font-size:15px}
 
-/* ---- Các phần ---- */
+/* ---- Parts ---- */
 .sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 20px}
 .sec-h h2{margin:0;font-size:clamp(22px,2.6vw,28px);font-weight:700}
 .sec-h p{margin:0;color:var(--muted)}
@@ -89,7 +89,7 @@ main{max-width:1280px;margin:0 auto;padding:0 24px}
 .part .go{margin-top:8px;display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:15px}
 @media (prefers-reduced-motion:reduce){.part,.part .img img{transition:none}.part:hover{transform:none}}
 
-/* ---- Dữ liệu ---- */
+/* ---- Data ---- */
 .sources{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;padding-bottom:56px}
 @media (max-width:1100px){.sources{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:640px){.sources{grid-template-columns:1fr}}
@@ -106,21 +106,21 @@ footer.foot a:hover{text-decoration:underline}
 <body>
 <header class="top">
   <a class="brand" href="index.html">
-    <span class="logos"><img src="assets/logos/nasa.png" alt="NASA Space Apps Challenge" width="36" height="36"><img src="assets/logos/team.png" alt="Đội Long Geo – Geomatics" width="36" height="36"><img src="assets/logos/project.png" alt="Logo dự án UrHeatixel" width="36" height="36"></span>
+    <span class="logos"><img src="assets/logos/nasa.png" alt="NASA Space Apps Challenge" width="36" height="36"><img src="assets/logos/team.png" alt="Team Long Geo – Geomatics" width="36" height="36"><img src="assets/logos/project.png" alt="UrHeatixel project logo" width="36" height="36"></span>
     <div>
       <h1>UrHeatixel</h1>
-      <p>NASA Space Apps Challenge 2026 · Hà Nội</p>
+      <p>NASA Space Apps Challenge 2026 · Hanoi</p>
     </div>
   </a>
   <div class="top-right">
-    <nav class="parts" aria-label="Các phần">
-      <a href="daily.html"><b>01</b><span class="lb">Nhiệt độ bề mặt đất</span><span class="sh">LST</span></a>
-      <a href="normalized.html"><b>02</b><span class="lb">LST chuẩn hóa</span><span class="sh">Chuẩn hóa</span></a>
-      <a href="builtup.html"><b>03</b><span class="lb">Đất xây dựng</span><span class="sh">Xây dựng</span></a>
-      <a href="ndvi.html"><b>04</b><span class="lb">Thực vật NDVI</span><span class="sh">NDVI</span></a>
-      <a href="hotspot.html"><b>05</b><span class="lb">Điểm nóng</span><span class="sh">Điểm nóng</span></a>
+    <nav class="parts" aria-label="Parts">
+      <a href="daily.html"><b>01</b><span class="lb">Land Surface Temperature</span><span class="sh">LST</span></a>
+      <a href="normalized.html"><b>02</b><span class="lb">Normalized LST</span><span class="sh">Normalized</span></a>
+      <a href="builtup.html"><b>03</b><span class="lb">Built-up Area</span><span class="sh">Built-up</span></a>
+      <a href="ndvi.html"><b>04</b><span class="lb">Vegetation NDVI</span><span class="sh">NDVI</span></a>
+      <a href="hotspot.html"><b>05</b><span class="lb">Hotspots</span><span class="sh">Hotspots</span></a>
     </nav>
-    <button class="icon-btn" id="themeBtn" aria-label="Đổi giao diện sáng/tối">
+    <button class="icon-btn" id="themeBtn" aria-label="Toggle light/dark theme">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
     </button>
   </div>
@@ -131,96 +131,96 @@ footer.foot a:hover{text-decoration:underline}
     <div>
       <div class="hero-logos">
         <figure><img src="assets/logos/nasa.png" alt="NASA Space Apps Challenge"><figcaption>NASA Space Apps</figcaption></figure>
-        <figure><img src="assets/logos/team.png" alt="Đội Long Geo – Geomatics"><figcaption>Long Geo</figcaption></figure>
-        <figure><img src="assets/logos/project.png" alt="Logo dự án UrHeatixel"><figcaption>UrHeatixel</figcaption></figure>
+        <figure><img src="assets/logos/team.png" alt="Team Long Geo – Geomatics"><figcaption>Long Geo</figcaption></figure>
+        <figure><img src="assets/logos/project.png" alt="UrHeatixel project logo"><figcaption>UrHeatixel</figcaption></figure>
       </div>
-      <span class="kicker"><i></i>NASA Space Apps Challenge 2026 · Hà Nội</span>
+      <span class="kicker"><i></i>NASA Space Apps Challenge 2026 · Hanoi</span>
       <h1><span class="ur">UrHeatixel</span></h1>
-      <p class="topic">Giám sát biến động không gian của các vùng nhiệt độ cao phục vụ nhận diện xu hướng mở rộng đô thị tại thành phố Hà Nội</p>
-      <p class="lead">Từng pixel ảnh vệ tinh NASA MODIS và Sentinel-2 cho thấy vùng nhiệt độ bề mặt đất cao của Hà Nội đã lan từ lõi nội thành ra vùng ven, cùng hướng với sự mở rộng đất xây dựng và biến động thảm thực vật.</p>
+      <p class="topic">Monitoring the spatial dynamics of high land surface temperature zones to identify urban expansion trends in Hanoi, Vietnam</p>
+      <p class="lead">Pixel by pixel, NASA MODIS and Sentinel-2 imagery shows Hanoi's high land surface temperature zones spreading from the inner city to the periphery, in step with built-up expansion and vegetation change.</p>
       <div class="cta">
-        <a class="btn primary" href="daily.html">Bắt đầu khám phá
+        <a class="btn primary" href="daily.html">Start exploring
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
-        <a class="btn ghost" href="normalized.html">Xem kết quả chính</a>
+        <a class="btn ghost" href="normalized.html">See key results</a>
       </div>
     </div>
 
     <figure class="viz" style="margin:0">
       <div class="viz-head">
-        <span class="t">Phân cấp LST chuẩn hóa</span>
-        <div class="yr-switch" role="group" aria-label="Chọn năm hiển thị">
+        <span class="t">Normalized LST classes</span>
+        <div class="yr-switch" role="group" aria-label="Select year">
           <button data-y="2017" aria-pressed="false">2017</button>
           <button data-y="2025" aria-pressed="true">2025</button>
-          <button class="pp" id="ppBtn" aria-label="Tạm dừng tự chuyển năm"><svg id="ppIco" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg></button>
+          <button class="pp" id="ppBtn" aria-label="Pause year rotation"><svg id="ppIco" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg></button>
         </div>
       </div>
-      <div class="map-box" id="mapBox" role="img" aria-label="Bản đồ phân cấp LST chuẩn hóa Hà Nội, so sánh năm 2017 và 2025">
+      <div class="map-box" id="mapBox" role="img" aria-label="Normalized LST class map of Hanoi, comparing 2017 and 2025">
         <canvas id="c2017"></canvas><canvas id="c2025"></canvas>
         <svg id="outline" aria-hidden="true"></svg>
-        <div class="map-tag"><span class="y" id="tagY">2025</span><span class="s">Vùng nhiệt cao <b id="tagP">–</b></span></div>
+        <div class="map-tag"><span class="y" id="tagY">2025</span><span class="s">High-heat zone <b id="tagP">–</b></span></div>
       </div>
       <div class="legend5" id="legend5"></div>
     </figure>
   </section>
 
-  <section class="stats" aria-label="Số liệu chính">
-    <div class="card stat"><span class="n">279</span><span class="d">ảnh nhiệt độ bề mặt đất MODIS theo ngày (142 ảnh năm 2017, 137 ảnh năm 2025)</span></div>
-    <div class="card stat"><span class="n"><span id="sH17">–</span><span class="arr">→</span><span class="hot" id="sH25">–</span></span><span class="d">diện tích vùng nhiệt cao (High + Very High), 2017 → 2025</span></div>
-    <div class="card stat"><span class="n hot" id="sBU">–</span><span class="d" id="sBUd">đất xây dựng tăng ròng giai đoạn 2017 – 2025</span></div>
+  <section class="stats" aria-label="Key figures">
+    <div class="card stat"><span class="n">279</span><span class="d">daily MODIS land surface temperature images (142 in 2017, 137 in 2025)</span></div>
+    <div class="card stat"><span class="n"><span id="sH17">–</span><span class="arr">→</span><span class="hot" id="sH25">–</span></span><span class="d">share of area in the high-heat zone (High + Very High), 2017 → 2025</span></div>
+    <div class="card stat"><span class="n hot" id="sBU">–</span><span class="d" id="sBUd">net built-up growth, 2017 – 2025</span></div>
   </section>
 
   <section aria-labelledby="partsH">
-    <div class="sec-h"><h2 id="partsH">Năm phần của câu chuyện</h2><p>Di chuột lên bản đồ để xem giá trị từng pixel</p></div>
+    <div class="sec-h"><h2 id="partsH">The story in five parts</h2><p>Hover over any map to read the value of each pixel</p></div>
     <div class="parts-grid">
       <a class="card part" href="daily.html">
         <div class="img"><img src="assets/maps/lst_mean_2017_card.jpg" alt="" loading="lazy"></div>
-        <div class="body"><span class="no">PHẦN 01</span><h3>Nhiệt độ bề mặt đất theo ngày</h3>
-          <p>Xem từng ngày ảnh LST của 2017 và 2025 đặt cạnh nhau, đồng bộ theo ngày trong năm hoặc cho chạy tự động.</p>
-          <span class="go">Mở phần 01 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></div>
+        <div class="body"><span class="no">PART 01</span><h3>Daily land surface temperature</h3>
+          <p>Browse every daily LST image of 2017 and 2025 side by side, synced by day of year or played as an animation.</p>
+          <span class="go">Open part 01 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></div>
       </a>
       <a class="card part" href="normalized.html">
         <div class="img"><img src="assets/maps/lst_class_2025_card.jpg" alt="" loading="lazy"></div>
-        <div class="body"><span class="no">PHẦN 02</span><h3>LST chuẩn hóa &amp; vùng nhiệt cao</h3>
-          <p>LST trung bình năm, chuẩn hóa 0–1 và chia 5 cấp; ma trận biến động cho thấy nơi nào nóng lên tương đối.</p>
-          <span class="go">Mở phần 02 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></div>
+        <div class="body"><span class="no">PART 02</span><h3>Normalized LST &amp; high-heat zones</h3>
+          <p>Annual mean LST, normalized to 0–1 and split into 5 classes; a change matrix shows where it got relatively hotter.</p>
+          <span class="go">Open part 02 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></div>
       </a>
       <a class="card part" href="builtup.html">
         <div class="img"><img src="assets/maps/change_2017_2025_card.jpg" alt="" loading="lazy"></div>
-        <div class="body"><span class="no">PHẦN 03</span><h3>Đất xây dựng mở rộng</h3>
-          <p>Đất xây dựng 10 m từ Sentinel-2: nguyên nhân khiến vùng nhiệt cao lan rộng ra ngoại vi.</p>
-          <span class="go">Mở phần 03 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></div>
+        <div class="body"><span class="no">PART 03</span><h3>Built-up expansion</h3>
+          <p>10 m built-up area from Sentinel-2: a driver pushing the high-heat zone outward to the periphery.</p>
+          <span class="go">Open part 03 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></div>
       </a>
       <a class="card part" href="ndvi.html">
         <div class="img"><img src="assets/maps/ndvi_change_card.jpg" alt="" loading="lazy"></div>
-        <div class="body"><span class="no">PHẦN 04</span><h3>Thảm thực vật NDVI</h3>
-          <p>NDVI phân cấp năm 2017 và 2025 từ MODIS; chồng hai lớp để thấy nơi thực vật giảm, giữ nguyên hay tăng cấp.</p>
-          <span class="go">Mở phần 04 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></div>
+        <div class="body"><span class="no">PART 04</span><h3>Vegetation (NDVI)</h3>
+          <p>NDVI classes for 2017 and 2025 from MODIS; overlaying the two shows where vegetation lost, kept or gained class.</p>
+          <span class="go">Open part 04 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></div>
       </a>
       <a class="card part" href="hotspot.html">
         <div class="img"><img src="assets/maps/hotspot_card.png" alt="" loading="lazy" style="object-fit:contain"></div>
-        <div class="body"><span class="no">PHẦN 05</span><h3>Điểm nóng cần can thiệp</h3>
-          <p>Chồng LST và NDVI chuẩn hóa: nơi vừa rất nóng vừa thiếu cây xanh là điểm nóng cực kỳ khẩn cấp.</p>
-          <span class="go">Mở phần 05 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></div>
+        <div class="body"><span class="no">PART 05</span><h3>Hotspots for intervention</h3>
+          <p>Overlaying normalized LST and NDVI: places that are both very hot and short of greenery are extremely urgent hotspots.</p>
+          <span class="go">Open part 05 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></div>
       </a>
     </div>
   </section>
 
   <section aria-labelledby="srcH">
-    <div class="sec-h"><h2 id="srcH">Dữ liệu</h2></div>
+    <div class="sec-h"><h2 id="srcH">Data</h2></div>
     <div class="sources">
-      <div class="card src"><span class="k">Nhiệt độ bề mặt đất</span><span class="v">NASA MODIS Terra MOD11A1 v061</span><span class="m">LST_Day_1km · 1 km · theo ngày</span></div>
-      <div class="card src"><span class="k">Lớp phủ mặt đất</span><span class="v">Esri Sentinel-2 Land Cover</span><span class="m">Built Area · 10 m · 2017, 2025</span></div>
-      <div class="card src"><span class="k">Chỉ số thực vật</span><span class="v">NASA MODIS Terra MOD13A2 v061</span><span class="m">NDVI · 1 km · tổng hợp 16 ngày</span></div>
-      <div class="card src"><span class="k">Ranh giới</span><span class="v">TP. Hà Nội · 126 xã/phường</span><span class="m">Nguồn: GIS.vn · đơn vị hành chính 2025</span></div>
+      <div class="card src"><span class="k">Land surface temperature</span><span class="v">NASA MODIS Terra MOD11A1 v061</span><span class="m">LST_Day_1km · 1 km · daily</span></div>
+      <div class="card src"><span class="k">Land cover</span><span class="v">Esri Sentinel-2 Land Cover</span><span class="m">Built Area · 10 m · 2017, 2025</span></div>
+      <div class="card src"><span class="k">Vegetation index</span><span class="v">NASA MODIS Terra MOD13A2 v061</span><span class="m">NDVI · 1 km · 16-day composite</span></div>
+      <div class="card src"><span class="k">Boundaries</span><span class="v">Hanoi · 126 communes/wards</span><span class="m">Source: GIS.vn · 2025 administrative units</span></div>
     </div>
   </section>
 </main>
 
 <footer class="foot">
-  <span>UrHeatixel · Team Long Geo – Geomatics · NASA Space Apps Challenge 2026, Hà Nội</span>
+  <span>UrHeatixel · Team Long Geo – Geomatics · NASA Space Apps Challenge 2026, Hanoi</span>
   <a href="https://github.com/nguyendailong289/NASA-SPACE-CHALLENGE-2026---URHEATIXEL" target="_blank" rel="noopener">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.58 9.58 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>
-    Mã nguồn trên GitHub
+    Source code on GitHub
   </a>
 </footer>
 
@@ -232,10 +232,10 @@ const N = window.LSTN, B = window.BUILTUP;
 const W = N.width, H = N.height, [lonMin, latMin, lonMax, latMax] = N.bounds;
 const CLS = ['#000004','#50127b','#b6377a','#fb8761','#fcfdbf'];
 const NAMES = ['Very Low','Low','Moderate','High','Very High'];
-const f = (v, d = 1) => v.toLocaleString('vi-VN', { minimumFractionDigits:d, maximumFractionDigits:d });
+const f = (v, d = 1) => v.toLocaleString('en-US', { minimumFractionDigits:d, maximumFractionDigits:d });
 const hex = h => [1,3,5].map(i => parseInt(h.slice(i, i + 2), 16));
 
-/* Bản đồ pixel */
+/* Pixel map */
 const aspect = W * Math.cos((latMin + latMax) / 2 * Math.PI / 180) / H;
 const box = document.getElementById('mapBox');
 box.style.aspectRatio = aspect;
@@ -247,7 +247,7 @@ const highPct = {};
   cx.putImageData(img, 0, 0);
   const km = N.years[y].classKm2; highPct[y] = (km[4] + km[5]) / N.totalKm2 * 100;
 });
-// Đường ranh giới tỉnh
+// Province boundary
 const sx = lon => (lon - lonMin) / (lonMax - lonMin) * 1000, sy = lat => (latMax - lat) / (latMax - latMin) * 1000;
 const ol = document.getElementById('outline');
 ol.setAttribute('viewBox', '0 0 1000 1000'); ol.setAttribute('preserveAspectRatio', 'none');
@@ -267,20 +267,20 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let timer = null;
 const pp = document.getElementById('ppBtn'), ico = document.getElementById('ppIco');
 function play(){ timer = setInterval(() => show(year === '2017' ? '2025' : '2017'), 3200);
-  pp.setAttribute('aria-label', 'Tạm dừng tự chuyển năm'); ico.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>'; }
+  pp.setAttribute('aria-label', 'Pause year rotation'); ico.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>'; }
 function stop(){ clearInterval(timer); timer = null;
-  pp.setAttribute('aria-label', 'Tự chuyển năm'); ico.innerHTML = '<path d="M7 4v16l13-8z"/>'; }
+  pp.setAttribute('aria-label', 'Rotate years automatically'); ico.innerHTML = '<path d="M7 4v16l13-8z"/>'; }
 pp.onclick = () => timer ? stop() : play();
 document.querySelectorAll('.yr-switch [data-y]').forEach(b => b.onclick = () => { stop(); show(b.dataset.y); });
 show('2017');
 if (reduce) stop(); else play();
 
-/* Số liệu chính */
+/* Key figures */
 document.getElementById('sH17').textContent = f(highPct['2017']) + '%';
 document.getElementById('sH25').textContent = f(highPct['2025']) + '%';
 const px = B.pixelArea / 1e6, b17 = B.counts.built_2017['7'], b25 = B.counts.built_2025['7'];
 document.getElementById('sBU').textContent = '+' + f((b25 - b17) * px, 2) + ' km²';
-document.getElementById('sBUd').textContent = `đất xây dựng tăng ròng 2017 – 2025 (+${f((b25 - b17) / b17 * 100, 2)}%)`;
+document.getElementById('sBUd').textContent = `net built-up growth, 2017 – 2025 (+${f((b25 - b17) / b17 * 100, 2)}%)`;
 })();
 </script>
 </body>

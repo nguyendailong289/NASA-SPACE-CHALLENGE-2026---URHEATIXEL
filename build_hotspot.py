@@ -21,7 +21,7 @@ import os
 import numpy as np
 import rasterio
 
-from build_data import read_shp, read_dbf, simplify, contains
+from build_data import read_shp, read_dbf, simplify, contains, en_name
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LST_DIR = os.path.join(ROOT, "2_Data", "LST", "ket_qua")
@@ -60,7 +60,7 @@ def main():
 
     # Ranh giới + pixel -> xã
     xa_shapes = read_shp(os.path.join(AREA, "Ha_noi_xa.shp"))
-    names = [a["tenXa"] for a in read_dbf(os.path.join(AREA, "Ha_noi_xa.dbf"))]
+    names = [en_name(a["tenXa"]) for a in read_dbf(os.path.join(AREA, "Ha_noi_xa.dbf"))]
     cols, rows = np.meshgrid(np.arange(w) + 0.5, np.arange(h) + 0.5)
     xs, ys = tr.c + cols * tr.a, tr.f + rows * tr.e
     pix_xa = np.full((h, w), -1, int)

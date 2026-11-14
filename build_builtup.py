@@ -19,6 +19,8 @@ from rasterio.enums import Resampling
 from rasterio.warp import transform as warp_transform
 from PIL import Image
 
+from build_data import en_name
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LULC = os.path.join(ROOT, "2_Data", "LULC")
 AREA = os.path.join(ROOT, "1_Study area")
@@ -121,7 +123,7 @@ def main():
     tinh = read_shp(os.path.join(AREA, "Ha_noi_tinh.shp"))
     meta["tinh"] = [to_pixels(r, crs, inv, 2.5) for rec in tinh for r in rec]
     xa = read_shp(os.path.join(AREA, "Ha_noi_xa.shp"))
-    names = read_dbf_names(os.path.join(AREA, "Ha_noi_xa.dbf"), "tenXa")
+    names = [en_name(n) for n in read_dbf_names(os.path.join(AREA, "Ha_noi_xa.dbf"), "tenXa")]
     meta["xa"] = [{"ten": n, "rings": [to_pixels(r, crs, inv) for r in rings]} for rings, n in zip(xa, names)]
 
     # Bản đồ kết quả: bản gốc để tải + bản xem trước nhẹ

@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="vi">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>UrHeatixel · Điểm nóng LST – NDVI</title>
+<title>UrHeatixel · LST – NDVI Hotspots</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
@@ -49,21 +49,21 @@
 <body>
 <header class="top">
   <a class="brand" href="index.html">
-    <span class="logos"><img src="assets/logos/nasa.png" alt="NASA Space Apps Challenge" width="36" height="36"><img src="assets/logos/team.png" alt="Đội Long Geo – Geomatics" width="36" height="36"><img src="assets/logos/project.png" alt="Logo dự án UrHeatixel" width="36" height="36"></span>
+    <span class="logos"><img src="assets/logos/nasa.png" alt="NASA Space Apps Challenge" width="36" height="36"><img src="assets/logos/team.png" alt="Team Long Geo – Geomatics" width="36" height="36"><img src="assets/logos/project.png" alt="UrHeatixel project logo" width="36" height="36"></span>
     <div>
       <h1>UrHeatixel</h1>
-      <p>Quan hệ LST – NDVI &amp; điểm nóng cần can thiệp · Hà Nội · 2017 &amp; 2025</p>
+      <p>LST – NDVI relationship &amp; hotspots for intervention · Hanoi · 2017 &amp; 2025</p>
     </div>
   </a>
   <div class="top-right">
-    <nav class="parts" aria-label="Các phần">
-      <a href="daily.html"><b>01</b><span class="lb">Nhiệt độ bề mặt đất</span><span class="sh">LST</span></a>
-      <a href="normalized.html"><b>02</b><span class="lb">LST chuẩn hóa</span><span class="sh">Chuẩn hóa</span></a>
-      <a href="builtup.html"><b>03</b><span class="lb">Đất xây dựng</span><span class="sh">Xây dựng</span></a>
-      <a href="ndvi.html"><b>04</b><span class="lb">Thực vật NDVI</span><span class="sh">NDVI</span></a>
-      <a href="hotspot.html" aria-current="page"><b>05</b><span class="lb">Điểm nóng</span><span class="sh">Điểm nóng</span></a>
+    <nav class="parts" aria-label="Parts">
+      <a href="daily.html"><b>01</b><span class="lb">Land Surface Temperature</span><span class="sh">LST</span></a>
+      <a href="normalized.html"><b>02</b><span class="lb">Normalized LST</span><span class="sh">Normalized</span></a>
+      <a href="builtup.html"><b>03</b><span class="lb">Built-up Area</span><span class="sh">Built-up</span></a>
+      <a href="ndvi.html"><b>04</b><span class="lb">Vegetation NDVI</span><span class="sh">NDVI</span></a>
+      <a href="hotspot.html" aria-current="page"><b>05</b><span class="lb">Hotspots</span><span class="sh">Hotspots</span></a>
     </nav>
-    <button class="icon-btn" id="themeBtn" aria-label="Đổi giao diện sáng/tối">
+    <button class="icon-btn" id="themeBtn" aria-label="Toggle light/dark theme">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
     </button>
   </div>
@@ -71,29 +71,29 @@
 
 <main>
   <section class="intro">
-    <div class="eyebrow">PHẦN 05 · HÀNH ĐỘNG</div>
-    <h2>Nơi nóng nhất lại ít cây xanh nhất: những khu vực Hà Nội cần ưu tiên can thiệp</h2>
-    <p>Chồng lớp <b>LST chuẩn hóa</b> (Phần 02) và <b>NDVI chuẩn hóa</b> (Phần 04) trên cùng lưới 1 km. Mỗi pixel được xếp mức ưu tiên theo hai điều kiện bất lợi: <b>nhiệt độ bề mặt rất cao</b> và <b>thiếu thảm thực vật</b>.</p>
+    <div class="eyebrow">PART 05 · ACTION</div>
+    <h2>The hottest places have the least greenery: where Hanoi should intervene first</h2>
+    <p>The <b>normalized LST</b> (Part 02) and <b>normalized NDVI</b> (Part 04) layers are overlaid on the same 1 km grid. Each pixel is given a priority level based on two adverse conditions: <b>very high surface temperature</b> and <b>lack of vegetation</b>.</p>
     <div class="rule">
-      <div><b><i style="background:var(--ext)"></i>Cực kỳ khẩn cấp</b><span>Cả hai điều kiện: LST Very High (cấp 5, 0,8 – 1,0) <b style="display:inline">và</b> NDVI thấp (cấp 1–2, 0,0 – 0,4).</span></div>
-      <div><b><i style="background:var(--urg)"></i>Khẩn cấp</b><span>Một trong hai: LST Very High nhưng NDVI ≥ Moderate, <b style="display:inline">hoặc</b> NDVI thấp kèm LST High (cấp 4).</span></div>
+      <div><b><i style="background:var(--ext)"></i>Extremely urgent</b><span>Both conditions: LST Very High (class 5, 0.8 – 1.0) <b style="display:inline">and</b> low NDVI (classes 1–2, 0.0 – 0.4).</span></div>
+      <div><b><i style="background:var(--urg)"></i>Urgent</b><span>One of the two: LST Very High but NDVI ≥ Moderate, <b style="display:inline">or</b> low NDVI together with LST High (class 4).</span></div>
     </div>
   </section>
 
-  <!-- ============ BẢN ĐỒ ============ -->
+  <!-- ============ MAP ============ -->
   <section aria-labelledby="secMap">
-    <h2 class="sec-title" id="secMap">Bản đồ điểm nóng <span>pixel 1 km · kéo / cuộn để phóng to</span></h2>
+    <h2 class="sec-title" id="secMap">Hotspot map <span>1 km pixels · drag / scroll to zoom</span></h2>
     <div class="card map-shell">
       <div class="map-main">
         <div class="map-bar">
-          <div class="seg" role="group" aria-label="Chọn lớp">
-            <button data-layer="hot_2017" aria-pressed="true">Điểm nóng 2017</button>
-            <button data-layer="hot_2025" aria-pressed="false">Điểm nóng 2025</button>
-            <button data-layer="hot_change" aria-pressed="false">Biến động 2017–2025</button>
+          <div class="seg" role="group" aria-label="Select layer">
+            <button data-layer="hot_2017" aria-pressed="true">Hotspots 2017</button>
+            <button data-layer="hot_2025" aria-pressed="false">Hotspots 2025</button>
+            <button data-layer="hot_change" aria-pressed="false">Change 2017–2025</button>
           </div>
         </div>
         <div class="view" id="view" data-view="raster">
-          <div id="map" role="region" aria-label="Bản đồ điểm nóng LST – NDVI"></div>
+          <div id="map" role="region" aria-label="LST – NDVI hotspot map"></div>
         </div>
       </div>
       <div class="map-side">
@@ -102,75 +102,75 @@
           <p class="sub" id="lySub">–</p>
         </div>
         <div>
-          <h3>Chú giải</h3>
+          <h3>Legend</h3>
           <ul class="legend" id="legend"></ul>
         </div>
         <div id="boundaryBox">
-          <h3>Ranh giới</h3>
-          <label class="layer"><input type="checkbox" id="lyTinh" checked> Ranh giới tỉnh</label>
-          <label class="layer"><input type="checkbox" id="lyXa" checked> Ranh giới xã (126 đơn vị)</label>
+          <h3>Boundaries</h3>
+          <label class="layer"><input type="checkbox" id="lyTinh" checked> City boundary</label>
+          <label class="layer"><input type="checkbox" id="lyXa" checked> Commune boundaries (126 units)</label>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============ THỐNG KÊ ============ -->
+  <!-- ============ STATISTICS ============ -->
   <section aria-labelledby="secStat">
-    <h2 class="sec-title" id="secStat">Kết quả thống kê &amp; phân tích <span>năm 2025, so với 2017</span></h2>
+    <h2 class="sec-title" id="secStat">Statistics &amp; analysis <span>2025, compared with 2017</span></h2>
     <div class="kpis">
-      <div class="card kpi hl"><span class="lbl">Cực kỳ khẩn cấp 2025</span><span class="val" id="kExt">–</span><span class="sub" id="kExtS">–</span></div>
-      <div class="card kpi urg"><span class="lbl">Khẩn cấp 2025</span><span class="val" id="kUrg">–</span><span class="sub" id="kUrgS">–</span></div>
-      <div class="card kpi"><span class="lbl">Tương quan LST – NDVI 2025</span><span class="val" id="kR">–</span><span class="sub" id="kRS">–</span></div>
-      <div class="card kpi"><span class="lbl">Xã/phường có điểm nóng cực kỳ khẩn cấp</span><span class="val" id="kXa">–</span><span class="sub" id="kXaS">–</span></div>
+      <div class="card kpi hl"><span class="lbl">Extremely urgent 2025</span><span class="val" id="kExt">–</span><span class="sub" id="kExtS">–</span></div>
+      <div class="card kpi urg"><span class="lbl">Urgent 2025</span><span class="val" id="kUrg">–</span><span class="sub" id="kUrgS">–</span></div>
+      <div class="card kpi"><span class="lbl">LST – NDVI correlation 2025</span><span class="val" id="kR">–</span><span class="sub" id="kRS">–</span></div>
+      <div class="card kpi"><span class="lbl">Communes/wards with extremely urgent hotspots</span><span class="val" id="kXa">–</span><span class="sub" id="kXaS">–</span></div>
     </div>
 
     <div class="tables two">
       <div class="card tcard">
-        <div class="head"><h3>Quan hệ LST – NDVI chuẩn hóa (mỗi điểm là 1 pixel 1 km)</h3>
-          <div class="seg sm" role="group" aria-label="Năm của biểu đồ"><button data-sy="2017" aria-pressed="false">2017</button><button data-sy="2025" aria-pressed="true">2025</button></div></div>
+        <div class="head"><h3>Normalized LST vs NDVI (each dot is one 1 km pixel)</h3>
+          <div class="seg sm" role="group" aria-label="Chart year"><button data-sy="2017" aria-pressed="false">2017</button><button data-sy="2025" aria-pressed="true">2025</button></div></div>
         <svg id="scatter" viewBox="0 0 560 420" role="img"></svg>
         <p id="scNote"></p>
       </div>
       <div class="card tcard">
-        <div class="head"><h3>Bảng 10. Chồng lớp cấp LST × cấp NDVI (km²)</h3>
-          <div class="seg sm" role="group" aria-label="Năm của ma trận"><button data-my="2017" aria-pressed="false">2017</button><button data-my="2025" aria-pressed="true">2025</button></div></div>
+        <div class="head"><h3>Table 10. LST class × NDVI class overlay (km²)</h3>
+          <div class="seg sm" role="group" aria-label="Matrix year"><button data-my="2017" aria-pressed="false">2017</button><button data-my="2025" aria-pressed="true">2025</button></div></div>
         <div class="tbl-wrap"><table class="matrix" id="matrix"></table></div>
-        <p>Hàng là cấp LST, cột là cấp NDVI. Ô đỏ là <b>cực kỳ khẩn cấp</b>, ô cam là <b>khẩn cấp</b>. Không có pixel nào vừa LST Very High vừa NDVI Very High; NDVI Very Low chủ yếu là mặt nước nên mát.</p>
+        <p>Rows are LST classes, columns NDVI classes. Red cells are <b>extremely urgent</b>, orange cells <b>urgent</b>. No pixel is both LST Very High and NDVI Very High; NDVI Very Low is mostly water, which is cool.</p>
       </div>
     </div>
 
     <div class="tables two">
       <div class="card tcard">
-        <h3>Bảng 11. Xã/phường ưu tiên can thiệp năm 2025</h3>
+        <h3>Table 11. Priority communes/wards for intervention, 2025</h3>
         <div class="tbl-wrap"><table class="rank">
-          <thead><tr><th>#</th><th>Xã/phường</th><th>Cực kỳ KC (km²)</th><th>Khẩn cấp (km²)</th><th>% diện tích xã</th><th>2017 (km²)</th></tr></thead>
+          <thead><tr><th>#</th><th>Commune/ward</th><th>Extremely urgent (km²)</th><th>Urgent (km²)</th><th>% of unit area</th><th>2017 (km²)</th></tr></thead>
           <tbody id="tbRank"></tbody>
         </table></div>
         <p id="rankNote"></p>
       </div>
       <div class="card tcard">
-        <h3>Bảng 12. Biến động điểm nóng 2017 → 2025</h3>
+        <h3>Table 12. Hotspot change, 2017 → 2025</h3>
         <div class="comp" id="comp" role="img"></div>
         <div class="comp-legend" id="compLegend"></div>
         <div class="tbl-wrap"><table>
-          <thead><tr><th>Mức</th><th>2017 (km²)</th><th>2025 (km²)</th><th>Thay đổi</th></tr></thead>
+          <thead><tr><th>Level</th><th>2017 (km²)</th><th>2025 (km²)</th><th>Change</th></tr></thead>
           <tbody id="tbLv"></tbody>
         </table></div>
-        <h3 style="margin-top:8px">Nhận định chính</h3>
+        <h3 style="margin-top:8px">Key findings</h3>
         <ol class="insights" id="insights"></ol>
       </div>
     </div>
 
     <div class="card link-card">
-      <div><div class="eyebrow" style="margin-bottom:6px">KẾT LUẬN</div>
-      <p>Ghép lại cả câu chuyện: vùng nhiệt cao lan rộng (Phần 02) cùng hướng với đất xây dựng mở rộng (Phần 03) và thảm thực vật suy giảm (Phần 04). Quan hệ nghịch giữa nhiệt độ và cây xanh mạnh lên (r từ −0,24 xuống −0,42). Điểm nóng tăng 52% lên <b>192,4 km²</b>, tập trung ở các phường nội đô như <b>Hà Đông, Khương Đình, Tương Mai, Phương Liệt, Thanh Xuân</b>; một nửa trong số đó đã là điểm nóng từ 2017. Đây là những nơi cần ưu tiên can thiệp trước. Mức ưu tiên dựa trên LST và NDVI chuẩn hóa trong từng năm, nên phản ánh vị trí tương đối của mỗi pixel trong thành phố.</p></div>
-      <a href="index.html">Về trang bìa
+      <div><div class="eyebrow" style="margin-bottom:6px">CONCLUSION</div>
+      <p>Putting the story together: the spreading high-heat zone (Part 02) follows the same direction as built-up expansion (Part 03) and vegetation loss (Part 04). The inverse relationship between temperature and greenery is getting stronger (r from −0.24 to −0.42). Hotspots grew 52% to <b>192.4 km²</b>, concentrated in inner-city wards such as <b>Hà Đông, Khương Đình, Tương Mai, Phương Liệt and Thanh Xuân</b>; half of them were already hotspots in 2017. These are the places to intervene first. Priority levels are based on LST and NDVI normalized within each year, so they reflect each pixel's relative position within the city.</p></div>
+      <a href="index.html">Back to cover
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
       </a>
     </div>
   </section>
 </main>
-<footer>UrHeatixel · NASA Space Apps Challenge Hanoi 2026 · Dữ liệu: NASA MODIS MOD11A1 &amp; MOD13A2 v061 (1 km)</footer>
+<footer>UrHeatixel · NASA Space Apps Challenge Hanoi 2026 · Data: NASA MODIS MOD11A1 &amp; MOD13A2 v061 (1 km)</footer>
 <div class="comp-tip" id="compTip"></div>
 <div class="px-tip" id="pxTip"></div>
 
@@ -183,25 +183,25 @@ const W = D.width, H = D.height, [lonMin, latMin, lonMax, latMax] = D.bounds;
 const dx = (lonMax - lonMin) / W, dy = (latMax - latMin) / H;
 const SX = Math.cos((latMin + latMax) / 2 * Math.PI / 180) * dx / dy;
 const T = D.totalKm2;
-const f1 = (v, d = 1) => v.toLocaleString('vi-VN', { minimumFractionDigits:d, maximumFractionDigits:d });
+const f1 = (v, d = 1) => v.toLocaleString('en-US', { minimumFractionDigits:d, maximumFractionDigits:d });
 const pct = (v, base = T) => f1(v / base * 100, 1) + '%';
 const hex = h => [1,3,5].map(i => parseInt(h.slice(i, i + 2), 16));
 const cls = v => Math.min(5, Math.max(1, Math.ceil(Math.round(v * 1e6) / 1e6 / 0.2)));
 const NAMES = ['Very Low','Low','Moderate','High','Very High'];
 const LV = [
-  { name:'Không ưu tiên', color:'#CBD5E1', a:110 },
-  { name:'Khẩn cấp', color:'#F97316', a:255 },
-  { name:'Cực kỳ khẩn cấp', color:'#DC2626', a:255 },
+  { name:'Not a priority', color:'#CBD5E1', a:110 },
+  { name:'Urgent', color:'#F97316', a:255 },
+  { name:'Extremely urgent', color:'#DC2626', a:255 },
 ];
 const CH = [
-  { name:'Không phải điểm nóng', color:'#CBD5E1', a:110 },
-  { name:'Không còn ở 2025', color:'#60A5FA', a:255 },
-  { name:'Mới xuất hiện 2025', color:'#F97316', a:255 },
-  { name:'Duy trì cả hai năm', color:'#DC2626', a:255 },
+  { name:'Not a hotspot', color:'#CBD5E1', a:110 },
+  { name:'No longer a hotspot in 2025', color:'#60A5FA', a:255 },
+  { name:'New hotspot in 2025', color:'#F97316', a:255 },
+  { name:'Hotspot in both years', color:'#DC2626', a:255 },
 ];
-const Y = D.years, xaName = i => D.pixXa[i] >= 0 ? D.xa[D.pixXa[i]].ten : 'Hà Nội';
+const Y = D.years, xaName = i => D.pixXa[i] >= 0 ? D.xa[D.pixXa[i]].ten : 'Hanoi';
 
-/* ---------- Ảnh raster ---------- */
+/* ---------- Raster image ---------- */
 const urls = {};
 function rasterUrl(key){
   if (urls[key]) return urls[key];
@@ -213,7 +213,7 @@ function rasterUrl(key){
   return urls[key] = cv.toDataURL();
 }
 
-/* ---------- Bản đồ ---------- */
+/* ---------- Map ---------- */
 const map = L.map('map', { crs: L.CRS.Simple, minZoom: 0, maxZoom: 6, zoomSnap: 0.25, zoomDelta: 0.5, attributionControl: false, preferCanvas: true });
 const bounds = [[-H, 0], [0, W * SX]];
 const overlay = L.imageOverlay(rasterUrl('hot_2017'), bounds).addTo(map);
@@ -225,9 +225,9 @@ document.getElementById('lyTinh').onchange = e => e.target.checked ? tinh.addTo(
 document.getElementById('lyXa').onchange = e => e.target.checked ? xa.addTo(map) : xa.remove();
 
 const LAYERS = {
-  hot_2025: { title:'Điểm nóng năm 2025', sub:'Mức ưu tiên can thiệp theo LST và NDVI chuẩn hóa', pal:LV, km:Y['2025'].levelKm2 },
-  hot_2017: { title:'Điểm nóng năm 2017', sub:'Mức ưu tiên can thiệp theo LST và NDVI chuẩn hóa', pal:LV, km:Y['2017'].levelKm2 },
-  hot_change: { title:'Biến động điểm nóng 2017 → 2025', sub:'Điểm nóng = khẩn cấp hoặc cực kỳ khẩn cấp', pal:CH, km:D.changeKm2 },
+  hot_2025: { title:'Hotspots 2025', sub:'Intervention priority from normalized LST and NDVI', pal:LV, km:Y['2025'].levelKm2 },
+  hot_2017: { title:'Hotspots 2017', sub:'Intervention priority from normalized LST and NDVI', pal:LV, km:Y['2017'].levelKm2 },
+  hot_change: { title:'Hotspot change 2017 → 2025', sub:'Hotspot = urgent or extremely urgent', pal:CH, km:D.changeKm2 },
 };
 let cur = 'hot_2017';
 function setLayer(key){
@@ -254,9 +254,9 @@ map.on('mousemove click', e => {
   const line = y => { const l = Y[y].lstN[i], n = Y[y].ndviN[i], lv = LV[Y[y].level[i]];
     return `<div class="row${cur === 'hot_' + y ? ' on' : ''}" style="grid-template-columns:40px 12px auto"><span>${y}</span><i style="background:${lv.color}"></i><span>${lv.name}</span></div>` +
       `<div class="co" style="padding-left:58px">LST ${f1(l, 2)} (${NAMES[cls(l) - 1]}) · NDVI ${f1(n, 2)} (${NAMES[cls(n) - 1]})</div>`; };
-  pxTip.innerHTML = `<div class="nm">${xaName(i)}</div><div class="co">${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E · ô 1 km</div>` +
+  pxTip.innerHTML = `<div class="nm">${xaName(i)}</div><div class="co">${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E · 1 km cell</div>` +
     line('2017') + line('2025') +
-    `<div class="row${cur === 'hot_change' ? ' on' : ''}" style="grid-template-columns:40px 12px auto;margin-top:2px"><span>Đổi</span><i style="background:${CH[D.change[i]].color}"></i><span>${CH[D.change[i]].name}</span></div>`;
+    `<div class="row${cur === 'hot_change' ? ' on' : ''}" style="grid-template-columns:52px 12px auto;margin-top:2px"><span>Change</span><i style="background:${CH[D.change[i]].color}"></i><span>${CH[D.change[i]].name}</span></div>`;
   pxTip.style.display = 'block';
   const ev = e.originalEvent, tw = pxTip.offsetWidth, th = pxTip.offsetHeight;
   let tx = ev.clientX + 16, ty = ev.clientY + 16;
@@ -269,18 +269,18 @@ map.on('mouseout dragstart zoomstart', hidePx);
 
 /* ---------- KPI ---------- */
 const y25 = Y['2025'], y17 = Y['2017'];
-const nf = n => n.toLocaleString('vi-VN');
+const nf = n => n.toLocaleString('en-US');
 document.getElementById('kExt').innerHTML = f1(y25.levelKm2[2]) + '<small>km²</small>';
-document.getElementById('kExtS').innerHTML = `${nf(y25.levelPx[2])} pixel · 2017: <b>${f1(y17.levelKm2[2])} km²</b>`;
+document.getElementById('kExtS').innerHTML = `${nf(y25.levelPx[2])} pixels · 2017: <b>${f1(y17.levelKm2[2])} km²</b>`;
 document.getElementById('kUrg').innerHTML = f1(y25.levelKm2[1]) + '<small>km²</small>';
-document.getElementById('kUrgS').innerHTML = `${nf(y25.levelPx[1])} pixel · 2017: <b>${f1(y17.levelKm2[1])} km²</b>`;
+document.getElementById('kUrgS').innerHTML = `${nf(y25.levelPx[1])} pixels · 2017: <b>${f1(y17.levelKm2[1])} km²</b>`;
 document.getElementById('kR').innerHTML = 'r = ' + f1(y25.pearson, 2);
-document.getElementById('kRS').innerHTML = `2017: <b>r = ${f1(y17.pearson, 2)}</b> · tương quan nghịch`;
+document.getElementById('kRS').innerHTML = `2017: <b>r = ${f1(y17.pearson, 2)}</b> · inverse correlation`;
 const xaExt = y => Y[y].xa.filter(s => s.ext > 0).length;
 document.getElementById('kXa').textContent = xaExt('2025');
-document.getElementById('kXaS').innerHTML = `trên 126 · 2017: <b>${xaExt('2017')}</b>`;
+document.getElementById('kXaS').innerHTML = `out of 126 · 2017: <b>${xaExt('2017')}</b>`;
 
-/* ---------- Biểu đồ tán xạ ---------- */
+/* ---------- Scatter plot ---------- */
 const sv = document.getElementById('scatter');
 function scatter(y){
   document.querySelectorAll('[data-sy]').forEach(b => b.setAttribute('aria-pressed', b.dataset.sy === y));
@@ -295,18 +295,18 @@ function scatter(y){
   for (let i = 0; i < W * H; i++){ const lv = d.level[i]; if (lv < 0) continue; pts[lv].push(`<circle cx="${X(d.ndviN[i]).toFixed(1)}" cy="${Yp(d.lstN[i]).toFixed(1)}" r="${lv ? 2.6 : 1.8}"/>`); }
   s += `<g fill="#94A3B8" fill-opacity=".35">${pts[0].join('')}</g><g fill="#F97316">${pts[1].join('')}</g><g fill="#DC2626">${pts[2].join('')}</g>`;
   s += `<line x1="${X(0)}" y1="${Yp(d.intercept)}" x2="${X(1)}" y2="${Yp(d.intercept + d.slope)}" stroke="var(--fg)" stroke-width="2" stroke-dasharray="6 4"/>`;
-  s += `<text x="${X(0.4) + 6}" y="${Yp(1) + 16}" font-size="12" font-weight="600" fill="#DC2626">Nóng + ít cây xanh</text>`;
+  s += `<text x="${X(0.4) + 6}" y="${Yp(1) + 16}" font-size="12" font-weight="600" fill="#DC2626">Hot + little greenery</text>`;
   s += `<text x="${X(1)}" y="${Yp(d.intercept + d.slope) - 8}" text-anchor="end" font-size="12" fill="var(--fg)">r = ${f1(d.pearson, 2)}</text>`;
-  s += `<text x="${X(0.5)}" y="${yb + 40}" text-anchor="middle" font-size="12" fill="var(--muted)">NDVI chuẩn hóa (nhiều cây xanh →)</text>`;
-  s += `<text transform="translate(16 ${Yp(0.5)}) rotate(-90)" text-anchor="middle" font-size="12" fill="var(--muted)">LST chuẩn hóa (nóng hơn →)</text>`;
+  s += `<text x="${X(0.5)}" y="${yb + 40}" text-anchor="middle" font-size="12" fill="var(--muted)">Normalized NDVI (more greenery →)</text>`;
+  s += `<text transform="translate(16 ${Yp(0.5)}) rotate(-90)" text-anchor="middle" font-size="12" fill="var(--muted)">Normalized LST (hotter →)</text>`;
   sv.innerHTML = s;
-  sv.setAttribute('aria-label', `Biểu đồ tán xạ LST và NDVI chuẩn hóa năm ${y}, hệ số tương quan ${f1(d.pearson, 2)}`);
-  document.getElementById('scNote').innerHTML = `Năm ${y}: hệ số tương quan Pearson <b>r = ${f1(d.pearson, 2)}</b> (Spearman ${f1(d.spearman, 2)}). ` +
-    `Đường hồi quy: LST = ${f1(d.intercept, 2)} ${d.slope < 0 ? '−' : '+'} ${f1(Math.abs(d.slope), 2)} × NDVI. Vùng tô đỏ là góc "nóng + ít cây xanh".`;
+  sv.setAttribute('aria-label', `Scatter plot of normalized LST and NDVI in ${y}, correlation coefficient ${f1(d.pearson, 2)}`);
+  document.getElementById('scNote').innerHTML = `${y}: Pearson correlation <b>r = ${f1(d.pearson, 2)}</b> (Spearman ${f1(d.spearman, 2)}). ` +
+    `Regression line: LST = ${f1(d.intercept, 2)} ${d.slope < 0 ? '−' : '+'} ${f1(Math.abs(d.slope), 2)} × NDVI. The red area is the "hot + little greenery" corner.`;
 }
 document.querySelectorAll('[data-sy]').forEach(b => b.onclick = () => scatter(b.dataset.sy));
 
-/* ---------- Ma trận LST × NDVI ---------- */
+/* ---------- LST × NDVI matrix ---------- */
 function matrix(y){
   document.querySelectorAll('[data-my]').forEach(b => b.setAttribute('aria-pressed', b.dataset.my === y));
   const d = Y[y], ext = D.rule.extLst, low = D.rule.lowNdvi;
@@ -326,16 +326,16 @@ function matrix(y){
 }
 document.querySelectorAll('[data-my]').forEach(b => b.onclick = () => matrix(b.dataset.my));
 
-/* ---------- Xếp hạng xã/phường ---------- */
+/* ---------- Commune/ward ranking ---------- */
 const prev = Object.fromEntries(y17.xa.map(s => [s.k, s.ext + s.urg]));
 const ranked = y25.xa.filter(s => s.ext + s.urg > 0).sort((a, b) => (b.ext - a.ext) || (b.urg - a.urg) || ((b.ext + b.urg) / b.km2 - (a.ext + a.urg) / a.km2));
 const top = ranked.slice(0, 15), maxA = Math.max(...top.map(s => s.ext + s.urg));
 document.getElementById('tbRank').innerHTML = top.map((s, i) =>
   `<tr><td>${i + 1}</td><td><span class="bar" style="width:${90 * (s.ext + s.urg) / maxA}px"><i style="width:${s.ext / (s.ext + s.urg) * 100}%;background:#DC2626"></i><i style="width:${s.urg / (s.ext + s.urg) * 100}%;background:#F97316"></i></span>${D.xa[s.k].ten}</td>` +
   `<td>${f1(s.ext)}</td><td>${f1(s.urg)}</td><td>${pct(s.ext + s.urg, s.km2)}</td><td>${f1(prev[s.k] || 0)}</td></tr>`).join('');
-document.getElementById('rankNote').innerHTML = `Có <b>${ranked.length}</b> xã/phường có điểm nóng năm 2025; bảng hiện 15 đơn vị đứng đầu, xếp theo diện tích cực kỳ khẩn cấp rồi khẩn cấp. Xã/phường của mỗi pixel xác định theo tâm pixel 1 km.`;
+document.getElementById('rankNote').innerHTML = `<b>${ranked.length}</b> communes/wards had hotspots in 2025; the table shows the top 15, ranked by extremely urgent area, then urgent area. Each pixel is assigned to a commune/ward by its 1 km cell center.`;
 
-/* ---------- Biến động điểm nóng ---------- */
+/* ---------- Hotspot change ---------- */
 const comp = document.getElementById('comp'), tip = document.getElementById('compTip');
 [3, 2, 1].forEach(v => {
   const el = document.createElement('div'); el.style.flex = D.changeKm2[v]; el.style.background = CH[v].color;
@@ -344,21 +344,21 @@ const comp = document.getElementById('comp'), tip = document.getElementById('com
   el.addEventListener('pointerleave', () => tip.style.display = 'none');
   comp.appendChild(el);
 });
-comp.setAttribute('aria-label', 'Biến động điểm nóng: ' + [3, 2, 1].map(v => `${CH[v].name} ${f1(D.changeKm2[v])} km²`).join(', '));
+comp.setAttribute('aria-label', 'Hotspot change: ' + [3, 2, 1].map(v => `${CH[v].name} ${f1(D.changeKm2[v])} km²`).join(', '));
 document.getElementById('compLegend').innerHTML = [3, 2, 1].map(v => `<span><i style="background:${CH[v].color}"></i>${CH[v].name} · ${f1(D.changeKm2[v])} km²</span>`).join('');
 document.getElementById('tbLv').innerHTML = [2, 1].map(v => { const a = y17.levelKm2[v], b = y25.levelKm2[v], d = b - a;
   return `<tr><td><span class="sw" style="background:${LV[v].color}"></span>${LV[v].name}</td><td>${f1(a)}</td><td>${f1(b)}</td><td class="${d > 0 ? 'neg' : ''}" style="color:${d > 0 ? 'var(--hl)' : 'var(--y17)'}">${d > 0 ? '+' : ''}${f1(d)} km² (${d > 0 ? '+' : ''}${f1(d / a * 100, 0)}%)</td></tr>`; }).join('');
 
-/* ---------- Nhận định (tính từ số liệu) ---------- */
+/* ---------- Key findings (computed from the data) ---------- */
 const hot = y => Y[y].levelKm2[1] + Y[y].levelKm2[2];
 const persist = D.changeKm2[3], hot25 = hot('2025');
-const top5 = top.slice(0, 5).map(s => D.xa[s.k].ten.replace(/^(Phường|Xã) /, '')).join(', ');
+const top5 = top.slice(0, 5).map(s => D.xa[s.k].ten.replace(/ (Ward|Commune)$/, '')).join(', ');
 const items = [
-  `Quan hệ nghịch giữa nhiệt độ bề mặt và thảm thực vật <b>mạnh lên</b>: r từ ${f1(y17.pearson, 2)} (2017) xuống <b>${f1(y25.pearson, 2)}</b> (2025). Nơi ít cây xanh ngày càng nóng hơn tương đối.`,
-  `Tổng diện tích điểm nóng tăng từ ${f1(hot('2017'))} km² lên <b>${f1(hot25)} km²</b> (+${f1((hot25 - hot('2017')) / hot('2017') * 100, 0)}%); riêng cực kỳ khẩn cấp từ ${f1(y17.levelKm2[2])} lên <b>${f1(y25.levelKm2[2])} km²</b>.`,
-  `<b>${pct(persist, hot25)}</b> diện tích điểm nóng 2025 (${f1(persist)} km²) đã là điểm nóng từ 2017: đây là các điểm nóng kéo dài, cần ưu tiên can thiệp trước.`,
-  `Điểm nóng cực kỳ khẩn cấp tập trung ở các phường nội đô: <b>${top5}</b>.`,
-  `Hướng can thiệp gợi ý cho các ô đỏ: tăng cây xanh, mặt nước và vật liệu mát (mái, mặt đường phản xạ nhiệt) tại các phường trên; với ô cam, giữ lại thảm thực vật hiện có và hạn chế bê tông hóa thêm.`,
+  `The inverse relationship between surface temperature and vegetation is <b>getting stronger</b>: r went from ${f1(y17.pearson, 2)} (2017) to <b>${f1(y25.pearson, 2)}</b> (2025). Places with little greenery are becoming relatively hotter.`,
+  `Total hotspot area grew from ${f1(hot('2017'))} km² to <b>${f1(hot25)} km²</b> (+${f1((hot25 - hot('2017')) / hot('2017') * 100, 0)}%); the extremely urgent area alone went from ${f1(y17.levelKm2[2])} to <b>${f1(y25.levelKm2[2])} km²</b>.`,
+  `<b>${pct(persist, hot25)}</b> of the 2025 hotspot area (${f1(persist)} km²) was already a hotspot in 2017: these persistent hotspots should be addressed first.`,
+  `Extremely urgent hotspots are concentrated in inner-city wards: <b>${top5}</b>.`,
+  `Suggested interventions for red cells: add greenery, water surfaces and cool materials (reflective roofs and pavements) in the wards above; for orange cells, protect existing vegetation and limit further sealing of the surface.`,
 ];
 document.getElementById('insights').innerHTML = items.map((t, i) => `<li><span class="n">${i + 1}</span><span>${t}</span></li>`).join('');
 

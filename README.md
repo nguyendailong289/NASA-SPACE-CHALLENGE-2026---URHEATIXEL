@@ -1,30 +1,32 @@
 # UrHeatixel
 
-Giám sát biến động không gian của các vùng nhiệt độ cao phục vụ nhận diện xu hướng mở rộng đô thị tại thành phố Hà Nội.
-Dự án tham gia **NASA Space Apps Challenge 2026** (Hà Nội).
+Monitoring the spatial dynamics of high land surface temperature zones to identify urban expansion trends in Hanoi, Vietnam.
+A project for **NASA Space Apps Challenge 2026** (Hanoi) by team **Long Geo – Geomatics**.
+
+**Website:** https://nguyendailong289.github.io/NASA-SPACE-CHALLENGE-2026---URHEATIXEL/
 
 ## Website
 
-| Phần | Trang | Nội dung |
+| Part | Page | Content |
 | --- | --- | --- |
-| – | `index.html` | Trang bìa |
-| 01 | `daily.html` | Nhiệt độ bề mặt (LST) theo ngày, 2017 và 2025 |
-| 02 | `normalized.html` | LST trung bình năm, LST chuẩn hóa, phân cấp và biến động phân cấp |
-| 03 | `builtup.html` | Đất xây dựng 2017, 2025 và biến động |
-| 04 | `ndvi.html` | NDVI phân cấp 2017, 2025 và biến động cấp |
-| 05 | `hotspot.html` | Quan hệ LST – NDVI, điểm nóng cần can thiệp |
+| – | `index.html` | Cover page |
+| 01 | `daily.html` | Daily land surface temperature (LST), 2017 and 2025, and annual mean LST |
+| 02 | `normalized.html` | Normalized LST classes and class change |
+| 03 | `builtup.html` | Built-up area 2017, 2025 and change (10 m) |
+| 04 | `ndvi.html` | NDVI classes 2017, 2025 and class change |
+| 05 | `hotspot.html` | LST – NDVI relationship and hotspots for intervention |
 
-## Dữ liệu
+## Data
 
-- NASA MODIS Terra MOD11A1 v061, lớp LST_Day_1km (1 km, theo ngày)
-- Esri | Sentinel-2 Land Cover Explorer, lớp Built Area (10 m)
-- NASA MODIS Terra MOD13A2 v061, NDVI (1 km, tổng hợp 16 ngày)
-- Ranh giới hành chính TP. Hà Nội và 126 xã/phường (2025)
+- NASA MODIS Terra MOD11A1 v061, LST_Day_1km (1 km, daily)
+- Esri Sentinel-2 Land Cover, Built Area class (10 m)
+- NASA MODIS Terra MOD13A2 v061, NDVI (1 km, 16-day composite)
+- Administrative boundaries of Hanoi and its 126 communes/wards (2025), source: GIS.vn
 
-## Cập nhật dữ liệu
+## Updating the data
 
-Các script `build_*.py` đọc dữ liệu gốc ở thư mục dự án (`1_Study area`, `2_Data`, `4_Results`, không có trong repo này)
-và ghi lại các file trong `data/` và `assets/maps/`:
+The `build_*.py` scripts read the raw data from the project folder (`1_Study area`, `2_Data`, `4_Results`, not included in this repository)
+and rewrite the files in `data/` and `assets/maps/`:
 
 ```bash
 python build_data.py
@@ -35,4 +37,4 @@ python build_ndvi.py
 python build_hotspot.py
 ```
 
-Xem thử trên máy: `python -m http.server 8765` rồi mở http://localhost:8765
+Preview locally: `python -m http.server 8765`, then open http://localhost:8765

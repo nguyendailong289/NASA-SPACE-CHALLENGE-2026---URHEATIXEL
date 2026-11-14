@@ -1,9 +1,9 @@
-// Giao diện sáng/tối, nhớ lựa chọn giữa các trang (nếu trình duyệt cho phép)
+// Light/dark theme, remembered across pages (when the browser allows)
 (() => {
   const root = document.documentElement;
   try { const t = localStorage.getItem('uh-theme'); if (t) root.dataset.theme = t; } catch (e) {}
   document.addEventListener('DOMContentLoaded', () => {
-    // Thanh điều hướng cuộn ngang trên điện thoại: đưa mục đang mở vào giữa khung
+    // Horizontally scrolling nav on phones: center the current item
     const nav = document.querySelector('nav.parts'), curA = nav && nav.querySelector('[aria-current="page"]');
     if (nav && curA && nav.scrollWidth > nav.clientWidth){
       const a = curA.getBoundingClientRect(), n = nav.getBoundingClientRect();
