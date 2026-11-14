@@ -14,6 +14,8 @@
 <style>
 :root{ --hl:#FB8761; }
 .map-bar .grp{display:flex;flex-wrap:wrap;gap:8px}
+.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:480px){.kpis{grid-template-columns:1fr}}
 .ramp{height:14px;border-radius:4px}
 .ramp-ticks{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:6px}
 .px-tip .row{grid-template-columns:44px 64px 50px 12px auto}
@@ -70,7 +72,7 @@ td.pos{color:var(--hl)} td.neg{color:var(--y17)}
   </a>
   <div class="top-right">
     <nav class="parts" aria-label="Các phần">
-      <a href="daily.html"><b>01</b><span class="lb">Nhiệt độ bề mặt</span><span class="sh">LST</span></a>
+      <a href="daily.html"><b>01</b><span class="lb">Nhiệt độ bề mặt đất</span><span class="sh">LST</span></a>
       <a href="normalized.html" aria-current="page"><b>02</b><span class="lb">LST chuẩn hóa</span><span class="sh">Chuẩn hóa</span></a>
       <a href="builtup.html"><b>03</b><span class="lb">Đất xây dựng</span><span class="sh">Xây dựng</span></a>
       <a href="ndvi.html"><b>04</b><span class="lb">Thực vật NDVI</span><span class="sh">NDVI</span></a>
@@ -85,7 +87,7 @@ td.pos{color:var(--hl)} td.neg{color:var(--y17)}
 <main>
   <section class="intro">
     <div class="eyebrow">PHẦN 02 · XU HƯỚNG</div>
-    <h2>Vùng nhiệt độ bề mặt cao lan từ lõi đô thị ra ngoại vi</h2>
+    <h2>Vùng nhiệt độ bề mặt đất cao lan từ lõi đô thị ra ngoại vi</h2>
     <p>LST trung bình năm (°C) được gộp từ các ảnh <b>MODIS MOD11A1</b> theo ngày. Để so sánh hai năm có mức nhiệt khác nhau, LST được <b>chuẩn hóa min–max về khoảng 0–1 trong từng năm</b>, rồi chia thành <b>5 cấp</b> với bước 0,2: Very Low, Low, Moderate, High, Very High.</p>
   </section>
 
@@ -144,8 +146,6 @@ td.pos{color:var(--hl)} td.neg{color:var(--y17)}
     <h2 class="sec-title" id="secStat">Kết quả thống kê <span>diện tích theo cấp LST chuẩn hóa</span></h2>
 
     <div class="kpis">
-      <div class="card kpi"><span class="lbl">LST trung bình 2017</span><span class="val" id="kT17">–</span><span class="sub" id="kR17">–</span></div>
-      <div class="card kpi"><span class="lbl">LST trung bình 2025</span><span class="val" id="kT25">–</span><span class="sub" id="kR25">–</span></div>
       <div class="card kpi"><span class="lbl">Vùng nhiệt cao 2017 <small>(High + Very High)</small></span><span class="val" id="kH17">–</span><span class="sub"><b id="kH17p">–</b> diện tích khu vực</span></div>
       <div class="card kpi hl"><span class="lbl">Vùng nhiệt cao 2025 <small>(High + Very High)</small></span><span class="val" id="kH25">–</span><span class="sub"><b id="kH25p">–</b> diện tích khu vực</span></div>
     </div>
@@ -355,10 +355,6 @@ map.on('mouseout dragstart zoomstart', hidePx);
 /* ---------- Thống kê ---------- */
 const T = N.totalKm2, pct = v => f1(v / T * 100, 2) + '%';
 const y17 = N.years['2017'], y25 = N.years['2025'];
-document.getElementById('kT17').innerHTML = f1(y17.lstMean, 2) + '<small>°C</small>';
-document.getElementById('kT25').innerHTML = f1(y25.lstMean, 2) + '<small>°C</small>';
-document.getElementById('kR17').textContent = `khoảng ${f1(y17.lstMin, 2)} – ${f1(y17.lstMax, 2)} °C`;
-document.getElementById('kR25').textContent = `khoảng ${f1(y25.lstMin, 2)} – ${f1(y25.lstMax, 2)} °C`;
 const high = Y => Y.classKm2[4] + Y.classKm2[5];
 document.getElementById('kH17').innerHTML = f1(high(y17)) + '<small>km²</small>';
 document.getElementById('kH25').innerHTML = f1(high(y25)) + '<small>km²</small>';
