@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Urheatixel · Điểm nóng LST – NDVI</title>
+<title>UrHeatixel · Điểm nóng LST – NDVI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/logos/project_64.png" type="image/png">
 <link rel="stylesheet" href="assets/base.css">
 <script src="assets/theme.js"></script>
 <link rel="stylesheet" href="assets/sections.css">
@@ -49,14 +49,9 @@
 <body>
 <header class="top">
   <a class="brand" href="index.html">
-    <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true">
-      <rect width="36" height="36" rx="9" fill="#17223a"/>
-      <rect x="7" y="7" width="7" height="7" fill="#3B82F6"/><rect x="14.5" y="7" width="7" height="7" fill="#FBBF24"/><rect x="22" y="7" width="7" height="7" fill="#F97316"/>
-      <rect x="7" y="14.5" width="7" height="7" fill="#FBBF24"/><rect x="14.5" y="14.5" width="7" height="7" fill="#EF4444"/><rect x="22" y="14.5" width="7" height="7" fill="#F97316"/>
-      <rect x="7" y="22" width="7" height="7" fill="#60A5FA"/><rect x="14.5" y="22" width="7" height="7" fill="#F97316"/><rect x="22" y="22" width="7" height="7" fill="#FBBF24"/>
-    </svg>
+    <span class="logos"><img src="assets/logos/nasa.png" alt="NASA Space Apps Challenge" width="36" height="36"><img src="assets/logos/team.png" alt="Đội Long Geo – Geomatics" width="36" height="36"><img src="assets/logos/project.png" alt="Logo dự án UrHeatixel" width="36" height="36"></span>
     <div>
-      <h1>Urheatixel</h1>
+      <h1>UrHeatixel</h1>
       <p>Quan hệ LST – NDVI &amp; điểm nóng cần can thiệp · Hà Nội · 2017 &amp; 2025</p>
     </div>
   </a>
@@ -96,14 +91,9 @@
             <button data-layer="hot_2017" aria-pressed="false">Điểm nóng 2017</button>
             <button data-layer="hot_change" aria-pressed="false">Biến động 2017–2025</button>
           </div>
-          <div class="seg" role="group" aria-label="Kiểu hiển thị">
-            <button data-view="raster" aria-pressed="true">Lớp raster</button>
-            <button data-view="final" aria-pressed="false">Bản đồ kết quả</button>
-          </div>
         </div>
         <div class="view" id="view" data-view="raster">
           <div id="map" role="region" aria-label="Bản đồ điểm nóng LST – NDVI"></div>
-          <div class="final"><div class="empty">Bản đồ kết quả cho phần này sẽ được bổ sung.</div></div>
         </div>
       </div>
       <div class="map-side">
@@ -119,12 +109,6 @@
           <h3>Ranh giới</h3>
           <label class="layer"><input type="checkbox" id="lyTinh" checked> Ranh giới tỉnh</label>
           <label class="layer"><input type="checkbox" id="lyXa" checked> Ranh giới xã (126 đơn vị)</label>
-        </div>
-        <div style="display:grid;gap:8px">
-          <a class="dl" aria-disabled="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-            Tải bản đồ <small>· sẽ bổ sung</small>
-          </a>
         </div>
       </div>
     </div>
@@ -184,7 +168,7 @@
     </div>
   </section>
 </main>
-<footer>Urheatixel · NASA Space Apps Challenge Hanoi 2026 · Dữ liệu: NASA MODIS MOD11A1 &amp; MOD13A2 v061 (1 km)</footer>
+<footer>UrHeatixel · NASA Space Apps Challenge Hanoi 2026 · Dữ liệu: NASA MODIS MOD11A1 &amp; MOD13A2 v061 (1 km)</footer>
 <div class="comp-tip" id="compTip"></div>
 <div class="px-tip" id="pxTip"></div>
 
@@ -253,14 +237,7 @@ function setLayer(key){
   document.getElementById('legend').innerHTML = l.pal.map((p, v) => [p, v]).reverse().map(([p, v]) =>
     `<li><span class="sw" style="background:${p.color}"></span><span class="nm">${p.name}</span><span class="px">${f1(l.km[v])} km²</span></li>`).join('');
 }
-function setView(v){
-  document.getElementById('view').dataset.view = v;
-  document.querySelectorAll('button[data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === v));
-  document.getElementById('boundaryBox').style.display = v === 'raster' ? '' : 'none';
-  if (v === 'raster') map.invalidateSize();
-}
 document.querySelectorAll('button[data-layer]').forEach(b => b.onclick = () => setLayer(b.dataset.layer));
-document.querySelectorAll('button[data-view]').forEach(b => b.onclick = () => setView(b.dataset.view));
 
 /* ---------- Tooltip theo pixel ---------- */
 const pxTip = document.getElementById('pxTip');
