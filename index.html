@@ -66,8 +66,9 @@ main{max-width:1280px;margin:0 auto;padding:0 24px}
 .sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 20px}
 .sec-h h2{margin:0;font-size:clamp(22px,2.6vw,28px);font-weight:700}
 .sec-h p{margin:0;color:var(--muted)}
-.parts-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;padding-bottom:64px}
-@media (max-width:960px){.parts-grid{grid-template-columns:1fr}}
+.parts-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;padding-bottom:64px}
+@media (max-width:1100px){.parts-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.parts-grid{grid-template-columns:1fr}}
 .part{display:grid;grid-template-rows:auto 1fr;overflow:hidden;text-decoration:none;color:inherit;transition:border-color .2s,transform .2s,box-shadow .2s}
 .part:hover{border-color:color-mix(in srgb,var(--accent) 60%,var(--border));transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.25)}
 .part .img{aspect-ratio:1/1;background:var(--surface-2);overflow:hidden;border-bottom:1px solid var(--border)}
@@ -81,8 +82,9 @@ main{max-width:1280px;margin:0 auto;padding:0 24px}
 @media (prefers-reduced-motion:reduce){.part,.part .img img{transition:none}.part:hover{transform:none}}
 
 /* ---- Dữ liệu ---- */
-.sources{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding-bottom:56px}
-@media (max-width:760px){.sources{grid-template-columns:1fr}}
+.sources{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;padding-bottom:56px}
+@media (max-width:1100px){.sources{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.sources{grid-template-columns:1fr}}
 .src{padding:18px 20px;display:grid;gap:4px}
 .src .k{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
 .src .v{font-weight:600}
@@ -112,6 +114,7 @@ footer.foot a:hover{text-decoration:underline}
       <a href="daily.html"><b>01</b><span class="lb">Nhiệt độ bề mặt</span><span class="sh">LST</span></a>
       <a href="normalized.html"><b>02</b><span class="lb">LST chuẩn hóa</span><span class="sh">Chuẩn hóa</span></a>
       <a href="builtup.html"><b>03</b><span class="lb">Đất xây dựng</span><span class="sh">Xây dựng</span></a>
+      <a href="ndvi.html"><b>04</b><span class="lb">Thực vật NDVI</span><span class="sh">NDVI</span></a>
     </nav>
     <button class="icon-btn" id="themeBtn" aria-label="Đổi giao diện sáng/tối">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
@@ -125,7 +128,7 @@ footer.foot a:hover{text-decoration:underline}
       <span class="kicker"><i></i>NASA Space Apps Challenge 2026 · Hà Nội</span>
       <h1><span class="ur">UrHeatixel</span></h1>
       <p class="topic">Giám sát biến động không gian của các vùng nhiệt độ cao phục vụ nhận diện xu hướng mở rộng đô thị tại thành phố Hà Nội</p>
-      <p class="lead">Từng pixel ảnh vệ tinh NASA MODIS và Sentinel-2 cho thấy vùng nhiệt độ bề mặt cao của Hà Nội đã lan từ lõi nội thành ra vùng ven, cùng hướng với sự mở rộng đất xây dựng.</p>
+      <p class="lead">Từng pixel ảnh vệ tinh NASA MODIS và Sentinel-2 cho thấy vùng nhiệt độ bề mặt cao của Hà Nội đã lan từ lõi nội thành ra vùng ven, cùng hướng với sự mở rộng đất xây dựng và biến động thảm thực vật.</p>
       <div class="cta">
         <a class="btn primary" href="daily.html">Bắt đầu khám phá
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
@@ -158,7 +161,7 @@ footer.foot a:hover{text-decoration:underline}
   </section>
 
   <section aria-labelledby="partsH">
-    <div class="sec-h"><h2 id="partsH">Ba phần của câu chuyện</h2><p>Di chuột lên bản đồ để xem giá trị từng pixel</p></div>
+    <div class="sec-h"><h2 id="partsH">Bốn phần của câu chuyện</h2><p>Di chuột lên bản đồ để xem giá trị từng pixel</p></div>
     <div class="parts-grid">
       <a class="card part" href="daily.html">
         <div class="img"><img src="assets/maps/lst_mean_2017_card.jpg" alt="" loading="lazy"></div>
@@ -178,6 +181,12 @@ footer.foot a:hover{text-decoration:underline}
           <p>Đất xây dựng 10 m từ Sentinel-2: nguyên nhân khiến vùng nhiệt cao lan rộng ra ngoại vi.</p>
           <span class="go">Mở phần 03 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></div>
       </a>
+      <a class="card part" href="ndvi.html">
+        <div class="img"><img src="assets/maps/ndvi_change_card.png" alt="" loading="lazy" style="object-fit:contain"></div>
+        <div class="body"><span class="no">PHẦN 04</span><h3>Thảm thực vật NDVI</h3>
+          <p>NDVI phân cấp năm 2017 và 2025 từ MODIS; chồng hai lớp để thấy nơi thực vật giảm, giữ nguyên hay tăng cấp.</p>
+          <span class="go">Mở phần 04 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></span></div>
+      </a>
     </div>
   </section>
 
@@ -186,6 +195,7 @@ footer.foot a:hover{text-decoration:underline}
     <div class="sources">
       <div class="card src"><span class="k">Nhiệt độ bề mặt</span><span class="v">NASA MODIS Terra MOD11A1 v061</span><span class="m">LST_Day_1km · 1 km · theo ngày</span></div>
       <div class="card src"><span class="k">Lớp phủ mặt đất</span><span class="v">Esri | Sentinel-2 Land Cover</span><span class="m">Built Area · 10 m · 2017, 2025</span></div>
+      <div class="card src"><span class="k">Chỉ số thực vật</span><span class="v">NASA MODIS Terra MOD13A2 v061</span><span class="m">NDVI · 1 km · tổng hợp 16 ngày</span></div>
       <div class="card src"><span class="k">Ranh giới</span><span class="v">TP. Hà Nội · 126 xã/phường</span><span class="m">Đơn vị hành chính 2025</span></div>
     </div>
   </section>

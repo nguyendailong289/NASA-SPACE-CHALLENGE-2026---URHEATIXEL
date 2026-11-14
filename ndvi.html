@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Urheatixel · NDVI Hà Nội</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/base.css">
+<script src="assets/theme.js"></script>
+<link rel="stylesheet" href="assets/sections.css">
+<style>
+:root{ --hl:#EF4444; }
+.final .empty{display:grid;place-items:center;height:100%;color:var(--muted);font-size:15px;padding:24px}
+.dl[aria-disabled="true"]{background:var(--surface-2);color:var(--muted);pointer-events:none;box-shadow:inset 0 0 0 1px var(--border)}
+.kpi.good{border-color:color-mix(in srgb,#22C55E 55%,var(--border))}
+.kpi.good .val{color:#22C55E}
+:root[data-theme="light"] .kpi.good .val{color:#15803D}
+td.pos{color:#22C55E} td.neg{color:var(--hl)}
+:root[data-theme="light"] td.pos{color:#15803D}
+.tables.two{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}
+@media (max-width:1000px){.tables.two{grid-template-columns:1fr}}
+.matrix{border-collapse:separate;border-spacing:3px;width:100%;font-size:13px}
+.matrix th,.matrix td{border:0;padding:8px 6px;text-align:center;white-space:nowrap}
+.matrix th{font-size:11px;letter-spacing:.04em}
+.matrix th.rh{text-align:right;padding-right:10px}
+.matrix td{border-radius:6px;font-family:var(--mono);line-height:1.3}
+.matrix td small{display:block;font-size:11px;opacity:.75}
+.matrix td.diag{box-shadow:inset 0 0 0 2px var(--fg)}
+.matrix td.zero{color:var(--muted);opacity:.5}
+.matrix .axis{font-size:12px;color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="index.html">
+    <svg width="36" height="36" viewBox="0 0 36 36" aria-hidden="true">
+      <rect width="36" height="36" rx="9" fill="#17223a"/>
+      <rect x="7" y="7" width="7" height="7" fill="#3B82F6"/><rect x="14.5" y="7" width="7" height="7" fill="#FBBF24"/><rect x="22" y="7" width="7" height="7" fill="#F97316"/>
+      <rect x="7" y="14.5" width="7" height="7" fill="#FBBF24"/><rect x="14.5" y="14.5" width="7" height="7" fill="#EF4444"/><rect x="22" y="14.5" width="7" height="7" fill="#F97316"/>
+      <rect x="7" y="22" width="7" height="7" fill="#60A5FA"/><rect x="14.5" y="22" width="7" height="7" fill="#F97316"/><rect x="22" y="22" width="7" height="7" fill="#FBBF24"/>
+    </svg>
+    <div>
+      <h1>Urheatixel</h1>
+      <p>Chỉ số thực vật NDVI · Hà Nội · MODIS MOD13A2 · 2017 &amp; 2025</p>
+    </div>
+  </a>
+  <div class="top-right">
+    <nav class="parts" aria-label="Các phần">
+      <a href="daily.html"><b>01</b><span class="lb">Nhiệt độ bề mặt</span><span class="sh">LST</span></a>
+      <a href="normalized.html"><b>02</b><span class="lb">LST chuẩn hóa</span><span class="sh">Chuẩn hóa</span></a>
+      <a href="builtup.html"><b>03</b><span class="lb">Đất xây dựng</span><span class="sh">Xây dựng</span></a>
+      <a href="ndvi.html" aria-current="page"><b>04</b><span class="lb">Thực vật NDVI</span><span class="sh">NDVI</span></a>
+    </nav>
+    <button class="icon-btn" id="themeBtn" aria-label="Đổi giao diện sáng/tối">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="intro">
+    <div class="eyebrow">PHẦN 04 · THẢM THỰC VẬT</div>
+    <h2>Biến động cấp chỉ số thực vật NDVI giai đoạn 2017 – 2025</h2>
+    <p>NDVI năm được gộp từ 24 ảnh <b>MODIS MOD13A2</b> (1 km, tổng hợp 16 ngày) cho mỗi năm. Giá trị được <b>chuẩn hóa min–max về 0–1 trong từng năm</b>, rồi chia thành <b>5 cấp</b> với bước 0,2. Chồng hai lớp phân cấp 2017 và 2025 cho biết pixel nào giảm, giữ nguyên hay tăng cấp thực vật. Thảm thực vật suy giảm làm bề mặt mất khả năng làm mát, góp phần mở rộng vùng nhiệt cao.</p>
+  </section>
+
+  <!-- ============ 1. BẢN ĐỒ ============ -->
+  <section aria-labelledby="secMap">
+    <h2 class="sec-title" id="secMap">Bản đồ NDVI phân cấp <span>pixel 1 km · kéo / cuộn để phóng to</span></h2>
+    <div class="card map-shell">
+      <div class="map-main">
+        <div class="map-bar">
+          <div class="seg" role="group" aria-label="Chọn lớp">
+            <button data-layer="ndvi_2017" aria-pressed="true">Năm 2017</button>
+            <button data-layer="ndvi_2025" aria-pressed="false">Năm 2025</button>
+            <button data-layer="ndvi_change" aria-pressed="false">Biến động 2017–2025</button>
+          </div>
+          <div class="seg" role="group" aria-label="Kiểu hiển thị">
+            <button data-view="raster" aria-pressed="true">Lớp raster</button>
+            <button data-view="final" aria-pressed="false">Bản đồ kết quả</button>
+          </div>
+        </div>
+        <div class="view" id="view" data-view="raster">
+          <div id="map" role="region" aria-label="Bản đồ raster NDVI phân cấp"></div>
+          <div class="final"><a id="finalLink" target="_blank" rel="noopener"><img id="finalImg" alt=""></a><div class="empty" id="finalEmpty" hidden>Bản đồ kết quả cho lớp này sẽ được bổ sung.</div></div>
+        </div>
+      </div>
+      <div class="map-side">
+        <div>
+          <p class="title" id="lyTitle">–</p>
+          <p class="sub" id="lySub">–</p>
+        </div>
+        <div>
+          <h3>Chú giải</h3>
+          <ul class="legend" id="legend"></ul>
+        </div>
+        <div id="boundaryBox">
+          <h3>Ranh giới</h3>
+          <label class="layer"><input type="checkbox" id="lyTinh" checked> Ranh giới tỉnh</label>
+          <label class="layer"><input type="checkbox" id="lyXa" checked> Ranh giới xã (126 đơn vị)</label>
+        </div>
+        <div style="display:grid;gap:8px">
+          <a class="dl" id="dlBtn" download>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+            Tải bản đồ <small id="dlSize"></small>
+          </a>
+          <p class="note">Bản đồ hoàn chỉnh (PNG, độ phân giải đầy đủ) từ thư mục 4_Results/NDVI.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. THỐNG KÊ ============ -->
+  <section aria-labelledby="secStat">
+    <h2 class="sec-title" id="secStat">Kết quả thống kê <span>giai đoạn 2017 – 2025</span></h2>
+
+    <div class="kpis">
+      <div class="card kpi"><span class="lbl">NDVI cao 2017 <small>(High + Very High)</small></span><span class="val" id="kH17">–</span><span class="sub"><b id="kH17p">–</b> diện tích khu vực</span></div>
+      <div class="card kpi"><span class="lbl">NDVI cao 2025 <small>(High + Very High)</small></span><span class="val" id="kH25">–</span><span class="sub"><b id="kH25p">–</b> diện tích khu vực</span></div>
+      <div class="card kpi hl"><span class="lbl">Diện tích giảm cấp NDVI</span><span class="val" id="kDec">–</span><span class="sub"><b id="kDecP">–</b> diện tích khu vực</span></div>
+      <div class="card kpi good"><span class="lbl">Diện tích tăng cấp NDVI</span><span class="val" id="kInc">–</span><span class="sub"><b id="kIncP">–</b> diện tích khu vực</span></div>
+    </div>
+
+    <div class="tables">
+      <div class="card tcard">
+        <h3>Bảng 6. Diện tích các cấp NDVI năm 2017 và 2025</h3>
+        <div class="tbl-wrap"><table>
+          <thead>
+            <tr><th rowspan="2">Cấp (khoảng giá trị)</th><th colspan="2" style="text-align:center">2017</th><th colspan="2" style="text-align:center">2025</th><th rowspan="2">Thay đổi (km²)</th></tr>
+            <tr><th>km²</th><th>%</th><th>km²</th><th>%</th></tr>
+          </thead>
+          <tbody id="tb6"></tbody>
+        </table></div>
+        <p id="t6note"></p>
+      </div>
+      <div class="card tcard">
+        <h3>Bảng 7. Biến động cấp NDVI giai đoạn 2017 – 2025</h3>
+        <div class="comp" id="comp" role="img"></div>
+        <div class="comp-legend" id="compLegend"></div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Sự biến động</th><th>Pixel</th><th>Diện tích (km²)</th><th>Tỷ lệ</th></tr></thead>
+          <tbody id="tb7"></tbody>
+        </table></div>
+        <p id="t7note"></p>
+      </div>
+    </div>
+
+    <div class="tables two">
+      <div class="card tcard">
+        <h3>Bảng 8. Ma trận chuyển đổi cấp NDVI 2017 → 2025 (km²)</h3>
+        <div class="tbl-wrap"><table class="matrix" id="matrix"></table></div>
+        <p>Hàng là cấp năm 2017, cột là cấp năm 2025. Ô có viền là các pixel <b>giữ nguyên cấp</b>; màu đỏ là giảm cấp, màu xanh lá là tăng cấp; ô càng đậm thì diện tích càng lớn.</p>
+      </div>
+      <div class="card tcard">
+        <h3>Bảng 9. Diện tích theo mã biến động (11 – 55)</h3>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Mã · 2017 → 2025</th><th>Pixel</th><th>km²</th><th>%</th></tr></thead>
+          <tbody id="tbTrans"></tbody>
+        </table></div>
+        <p>Mã = cấp 2017 × 10 + cấp 2025; ví dụ 43 là High (2017) → Moderate (2025).</p>
+      </div>
+    </div>
+
+    <div class="card link-card">
+      <p>Hãy đối chiếu các vùng NDVI giảm cấp với vùng đất xây dựng mở rộng ở Phần 03 và vùng nhiệt cao ở Phần 02.</p>
+      <a href="index.html">
+        Về trang bìa
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+      </a>
+    </div>
+  </section>
+</main>
+<footer>Urheatixel · NASA Space Apps Challenge Hanoi 2026 · Dữ liệu: NASA MODIS MOD13A2 v061 (1 km, 16 ngày)</footer>
+<div class="comp-tip" id="compTip"></div>
+<div class="px-tip" id="pxTip"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="data/ndvi/ndvi_meta.js"></script>
+<script>
+(() => {
+const N = window.NDVI;
+const W = N.width, H = N.height, [lonMin, latMin, lonMax, latMax] = N.bounds;
+const dx = (lonMax - lonMin) / W, dy = (latMax - latMin) / H;
+const SX = Math.cos((latMin + latMax) / 2 * Math.PI / 180) * dx / dy;
+const T = N.totalKm2;
+const f1 = (v, d = 1) => v.toLocaleString('vi-VN', { minimumFractionDigits:d, maximumFractionDigits:d });
+const pct = v => f1(v / T * 100, 2) + '%';
+const hex = h => [1,3,5].map(i => parseInt(h.slice(i, i + 2), 16));
+
+/* ---------- Cấp NDVI (nâu = ít thực vật -> xanh đậm = nhiều thực vật) ---------- */
+const CLASSES = [
+  { k:1, name:'Very Low',  range:'0,0 – 0,2', color:'#8c510a' },
+  { k:2, name:'Low',       range:'0,2 – 0,4', color:'#d8b365' },
+  { k:3, name:'Moderate',  range:'0,4 – 0,6', color:'#d9f0a3' },
+  { k:4, name:'High',      range:'0,6 – 0,8', color:'#66bd63' },
+  { k:5, name:'Very High', range:'0,8 – 1,0', color:'#006837' },
+];
+/* ---------- Biến động: số cấp thay đổi ---------- */
+const DELTA = {
+  '-2': { name:'Giảm 2 cấp', color:'#B91C1C' },
+  '-1': { name:'Giảm 1 cấp', color:'#F87171' },
+  '0':  { name:'Giữ nguyên cấp', color:'#CBD5E1' },
+  '1':  { name:'Tăng 1 cấp', color:'#86EFAC' },
+  '2':  { name:'Tăng 2 cấp', color:'#15803D' },
+};
+const ORDER = [-2, -1, 0, 1, 2];
+const c17 = N.years['2017'].cls, c25 = N.years['2025'].cls;
+const codeAt = i => c17[i] * 10 + c25[i];
+const deltaOf = code => Math.max(-2, Math.min(2, (code % 10) - Math.floor(code / 10)));
+const dKm2 = {}, dPx = {};
+for (const [code, v] of Object.entries(N.trans)){ const d = deltaOf(+code); dKm2[d] = (dKm2[d] || 0) + v.km2; dPx[d] = (dPx[d] || 0) + v.px; }
+
+const LAYERS = {
+  ndvi_2017: { title:'NDVI phân cấp năm 2017', sub:'Chuẩn hóa min–max trong năm, 5 cấp' },
+  ndvi_2025: { title:'NDVI phân cấp năm 2025', sub:'Chuẩn hóa min–max trong năm, 5 cấp' },
+  ndvi_change: { title:'Biến động cấp NDVI 2017 → 2025', sub:'Số cấp thay đổi của mỗi pixel (mã 11 – 55)' },
+};
+
+/* ---------- Ảnh raster dựng từ dữ liệu ---------- */
+const urls = {};
+function rasterUrl(key){
+  if (urls[key]) return urls[key];
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const cx = cv.getContext('2d'), img = cx.createImageData(W, H);
+  for (let i = 0; i < W * H; i++){
+    if (!c17[i]) continue;
+    const col = key === 'ndvi_change' ? DELTA[deltaOf(codeAt(i))].color
+      : CLASSES[(key === 'ndvi_2017' ? c17[i] : c25[i]) - 1].color;
+    img.data.set([...hex(col), 255], i * 4);
+  }
+  cx.putImageData(img, 0, 0);
+  return urls[key] = cv.toDataURL();
+}
+
+/* ---------- Bản đồ ---------- */
+const map = L.map('map', { crs: L.CRS.Simple, minZoom: 0, maxZoom: 6, zoomSnap: 0.25, zoomDelta: 0.5, attributionControl: false, preferCanvas: true });
+const bounds = [[-H, 0], [0, W * SX]];
+const overlay = L.imageOverlay(rasterUrl('ndvi_2017'), bounds).addTo(map);
+map.fitBounds(bounds);
+map.setMaxBounds(L.latLngBounds(bounds).pad(0.3));
+const P = ([lon, lat]) => [-(latMax - lat) / dy, (lon - lonMin) / dx * SX];
+const xa = L.layerGroup(N.xa.map(x => L.polyline(x.rings.map(r => r.map(P)), { color:'#ffffff', weight:0.8, opacity:0.7, interactive:false }))).addTo(map);
+const tinh = L.polyline(N.tinh.map(r => r.map(P)), { color:'#ffffff', weight:2.5, interactive:false }).addTo(map);
+document.getElementById('lyTinh').onchange = e => e.target.checked ? tinh.addTo(map) : tinh.remove();
+document.getElementById('lyXa').onchange = e => e.target.checked ? xa.addTo(map) : xa.remove();
+
+const fmtMB = b => (b / 1048576).toLocaleString('vi-VN', { maximumFractionDigits:1 }) + ' MB';
+let cur = 'ndvi_2017';
+function setLayer(key){
+  cur = key;
+  overlay.setUrl(rasterUrl(key));
+  document.querySelectorAll('button[data-layer]').forEach(b => b.setAttribute('aria-pressed', b.dataset.layer === key));
+  document.getElementById('lyTitle').textContent = LAYERS[key].title;
+  document.getElementById('lySub').textContent = LAYERS[key].sub;
+  const lg = document.getElementById('legend');
+  if (key === 'ndvi_change'){
+    lg.innerHTML = ORDER.filter(d => dKm2[d]).map(d =>
+      `<li><span class="sw" style="background:${DELTA[d].color}"></span><span class="nm">${DELTA[d].name}</span><span class="px">${f1(dKm2[d])} km²</span></li>`).join('');
+  } else {
+    const Y = N.years[key.slice(-4)];
+    lg.innerHTML = CLASSES.map(c =>
+      `<li><span class="sw" style="background:${c.color}"></span><span class="nm">${c.name} <span style="color:var(--muted);font-size:13px">(${c.range})</span></span><span class="px">${f1(Y.classKm2[c.k])} km²</span></li>`).join('');
+  }
+  const m = N.maps[key], dl = document.getElementById('dlBtn'), fi = document.getElementById('finalImg'), fl = document.getElementById('finalLink');
+  if (m){
+    dl.removeAttribute('aria-disabled'); dl.href = m.file; dl.setAttribute('download', m.file.split('/').pop());
+    dl.setAttribute('aria-label', 'Tải bản đồ ' + LAYERS[key].title + ' (PNG)');
+    document.getElementById('dlSize').textContent = 'PNG · ' + fmtMB(m.bytes);
+    fi.src = m.preview; fi.alt = 'Bản đồ kết quả: ' + LAYERS[key].title;
+    fl.href = m.file; fl.hidden = false; document.getElementById('finalEmpty').hidden = true;
+  } else {
+    dl.setAttribute('aria-disabled', 'true'); dl.removeAttribute('href');
+    document.getElementById('dlSize').textContent = '· sẽ bổ sung';
+    fl.hidden = true; document.getElementById('finalEmpty').hidden = false;
+  }
+}
+function setView(v){
+  document.getElementById('view').dataset.view = v;
+  document.querySelectorAll('button[data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === v));
+  document.getElementById('boundaryBox').style.display = v === 'raster' ? '' : 'none';
+  if (v === 'raster') map.invalidateSize();
+}
+document.querySelectorAll('button[data-layer]').forEach(b => b.onclick = () => setLayer(b.dataset.layer));
+document.querySelectorAll('button[data-view]').forEach(b => b.onclick = () => setView(b.dataset.view));
+
+/* ---------- Giá trị theo pixel khi rê chuột ---------- */
+const pxTip = document.getElementById('pxTip');
+const hl = L.rectangle([[0,0],[0,0]], { color:'#22D3EE', weight:2.5, fill:false, interactive:false });
+function hidePx(){ pxTip.style.display = 'none'; hl.remove(); }
+map.on('mousemove click', e => {
+  const row = Math.floor(-e.latlng.lat), col = Math.floor(e.latlng.lng / SX);
+  if (row < 0 || col < 0 || row >= H || col >= W) return hidePx();
+  const i = row * W + col;
+  if (!c17[i]) return hidePx();
+  const lat = latMax - (row + .5) * dy, lon = lonMin + (col + .5) * dx;
+  const a = CLASSES[c17[i] - 1], b = CLASSES[c25[i] - 1], code = codeAt(i), d = DELTA[deltaOf(code)];
+  const row_ = (k, c, n, on) => `<div class="row${on ? ' on' : ''}"><span>${k}</span><i style="background:${c}"></i><span>${n}</span></div>`;
+  pxTip.innerHTML = `<div class="nm">${N.pixXa[i] >= 0 ? N.xa[N.pixXa[i]].ten : 'Hà Nội'}</div>` +
+    `<div class="co">${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E · ô 1 km</div>` +
+    row_('2017', a.color, `${a.name} (${a.range})`, cur === 'ndvi_2017') +
+    row_('2025', b.color, `${b.name} (${b.range})`, cur === 'ndvi_2025') +
+    row_('Biến động', d.color, `Mã ${code} · ${d.name}`, cur === 'ndvi_change');
+  pxTip.style.display = 'block';
+  const ev = e.originalEvent, tw = pxTip.offsetWidth, th = pxTip.offsetHeight;
+  let tx = ev.clientX + 16, ty = ev.clientY + 16;
+  if (tx + tw > innerWidth - 8) tx = ev.clientX - tw - 16;
+  if (ty + th > innerHeight - 8) ty = ev.clientY - th - 16;
+  pxTip.style.left = tx + 'px'; pxTip.style.top = ty + 'px';
+  hl.setBounds([[-row - 1, col * SX], [-row, (col + 1) * SX]]); if (!map.hasLayer(hl)) hl.addTo(map);
+});
+map.on('mouseout dragstart zoomstart', hidePx);
+
+/* ---------- Thống kê ---------- */
+const y17 = N.years['2017'], y25 = N.years['2025'];
+const high = Y => Y.classKm2[4] + Y.classKm2[5];
+const dec = (dKm2[-1] || 0) + (dKm2[-2] || 0), inc = (dKm2[1] || 0) + (dKm2[2] || 0);
+document.getElementById('kH17').innerHTML = f1(high(y17)) + '<small>km²</small>';
+document.getElementById('kH25').innerHTML = f1(high(y25)) + '<small>km²</small>';
+document.getElementById('kH17p').textContent = pct(high(y17));
+document.getElementById('kH25p').textContent = pct(high(y25));
+document.getElementById('kDec').innerHTML = f1(dec) + '<small>km²</small>';
+document.getElementById('kDecP').textContent = pct(dec);
+document.getElementById('kInc').innerHTML = f1(inc) + '<small>km²</small>';
+document.getElementById('kIncP').textContent = pct(inc);
+
+document.getElementById('tb6').innerHTML = CLASSES.map(c => {
+  const a = y17.classKm2[c.k], b = y25.classKm2[c.k], d = b - a;
+  return `<tr><td><span class="sw" style="background:${c.color}"></span>${c.name} (${c.range})</td>` +
+    `<td>${f1(a)}</td><td>${pct(a)}</td><td>${f1(b)}</td><td>${pct(b)}</td>` +
+    `<td class="${d >= 0 ? 'pos' : 'neg'}">${d > 0 ? '+' : ''}${f1(d)}</td></tr>`;
+}).join('') + `<tr><td><b>Tổng</b></td><td>${f1(T)}</td><td>100%</td><td>${f1(T)}</td><td>100%</td><td></td></tr>`;
+document.getElementById('t6note').innerHTML =
+  `Diện tích tính theo ${N.totalPx.toLocaleString('vi-VN')} pixel 1 km phủ khu vực Hà Nội (có hiệu chỉnh theo vĩ độ). ` +
+  `Vùng NDVI cao (High + Very High) thay đổi từ <b>${f1(high(y17))} km²</b> (${pct(high(y17))}) năm 2017 thành <b>${f1(high(y25))} km²</b> (${pct(high(y25))}) năm 2025.`;
+
+// Thanh tỷ lệ + bảng nhóm biến động (giống Phần 03)
+const comp = document.getElementById('comp'), tip = document.getElementById('compTip');
+const GROUPS = ORDER.filter(d => dKm2[d]);
+comp.setAttribute('aria-label', 'Tỷ lệ các loại biến động: ' + GROUPS.map(d => DELTA[d].name + ' ' + pct(dKm2[d])).join(', '));
+GROUPS.forEach(d => {
+  const el = document.createElement('div');
+  el.style.flex = dKm2[d]; el.style.background = DELTA[d].color;
+  el.addEventListener('pointermove', e => {
+    tip.innerHTML = `${DELTA[d].name}<br><b>${f1(dKm2[d])} km²</b> · ${pct(dKm2[d])}`;
+    tip.style.display = 'block';
+    tip.style.left = Math.min(e.clientX + 12, innerWidth - tip.offsetWidth - 8) + 'px'; tip.style.top = (e.clientY + 14) + 'px';
+  });
+  el.addEventListener('pointerleave', () => tip.style.display = 'none');
+  comp.appendChild(el);
+});
+document.getElementById('compLegend').innerHTML = GROUPS.map(d =>
+  `<span><i style="background:${DELTA[d].color}"></i>${DELTA[d].name} · ${pct(dKm2[d])}</span>`).join('');
+document.getElementById('tb7').innerHTML = GROUPS.map(d =>
+  `<tr><td><span class="sw" style="background:${DELTA[d].color}"></span>${DELTA[d].name}</td><td>${dPx[d].toLocaleString('vi-VN')}</td><td>${f1(dKm2[d], 2)}</td><td>${pct(dKm2[d])}</td></tr>`).join('');
+document.getElementById('t7note').innerHTML =
+  `Diện tích giảm cấp NDVI là <b>${f1(dec)} km²</b> (${pct(dec)}), tăng cấp là <b>${f1(inc)} km²</b> (${pct(inc)}), ` +
+  `giữ nguyên cấp là <b>${f1(dKm2[0])} km²</b> (${pct(dKm2[0])}).`;
+
+// Ma trận 5x5
+const TR = N.trans, maxTr = Math.max(...Object.values(TR).map(v => v.km2));
+const rgba = (h, a) => `rgba(${hex(h).join(',')},${a})`;
+let mx = `<thead><tr><th class="rh axis">2017 ↓ / 2025 →</th>${CLASSES.map(c => `<th>${c.name}</th>`).join('')}</tr></thead><tbody>`;
+CLASSES.forEach(r => {
+  mx += `<tr><th class="rh">${r.name}</th>`;
+  CLASSES.forEach(c => {
+    const code = r.k * 10 + c.k, v = TR[code], diag = r.k === c.k;
+    if (!v){ mx += `<td class="zero${diag ? ' diag' : ''}">–</td>`; return; }
+    const a = 0.18 + 0.8 * Math.sqrt(v.km2 / maxTr), d = deltaOf(code);
+    const dark = a > 0.55 && Math.abs(d) === 2;
+    mx += `<td class="${diag ? 'diag' : ''}" style="background:${rgba(DELTA[d].color, a)};color:${dark ? '#fff' : 'var(--fg)'}" ` +
+      `title="Mã ${code}: ${r.name} → ${c.name} · ${f1(v.km2)} km² · ${v.px} pixel">${f1(v.km2)}<small>${v.px} px</small></td>`;
+  });
+  mx += '</tr>';
+});
+document.getElementById('matrix').innerHTML = mx + '</tbody>';
+document.getElementById('tbTrans').innerHTML = Object.entries(TR).sort((a, b) => a[0] - b[0]).map(([code, v]) => {
+  const a = CLASSES[Math.floor(code / 10) - 1], b = CLASSES[code % 10 - 1], d = DELTA[deltaOf(+code)];
+  return `<tr><td><span class="sw" style="background:${d.color}"></span><b style="font-family:var(--mono)">${code}</b> · ${a.name} → ${b.name}</td>` +
+    `<td>${v.px.toLocaleString('vi-VN')}</td><td>${f1(v.km2)}</td><td>${pct(v.km2)}</td></tr>`;
+}).join('');
+
+setLayer('ndvi_2017');
+})();
+</script>
+</body>
+</html>
